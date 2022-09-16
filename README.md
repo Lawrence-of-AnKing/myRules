@@ -4,7 +4,11 @@
 
 要使用此规则，先前往 `https://sub.dler.io/` ，获取转换后的订阅链接。
 
-然后，复制 `clashRules.ini` 的RAW地址，前往 `https://www.urlencoder.org/` ，获取转码后的链接。
+然后，复制 `clashRules.ini` 的RAW地址，前往 `https://www.urlencoder.org/` ，获取转码后的链接：
+
+```Shell
+https%3A%2F%2Fraw.githubusercontent.com%2FLawrenceLiuQuanzhou%2FmyRules%2Fmain%2FclashRules.ini
+```
 
 最后，按照下面的方式制作新的订阅链接：
 

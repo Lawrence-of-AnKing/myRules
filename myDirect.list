@@ -22,6 +22,9 @@
 
 # 订阅转换链接：https://sub.dler.io/
 
+# 测试
+DOMAIN-SUFFIX,baidu.com,myDirect
+
 # Apple
 # 一般国内Apple肯定正常,不需要开代理
 DOMAIN,apple.comscoreresearch.com,myDirect

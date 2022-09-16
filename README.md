@@ -10,6 +10,12 @@
 https%3A%2F%2Fraw.githubusercontent.com%2FLawrenceLiuQuanzhou%2FmyRules%2Fmain%2FclashRules.ini
 ```
 
+预留一下策略组配置文件地址位置，在订阅链接的基础上加上下面这串代码：
+
+```Shell
+&insert=false&config=peizhiwenjian&emoji=true&list=false&udp=false&tfo=false&scv=false&fdn=false&sort=false
+```
+
 最后，按照下面的方式制作新的订阅链接：
 
 ```Shell

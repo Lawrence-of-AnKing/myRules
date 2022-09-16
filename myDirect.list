@@ -4,7 +4,7 @@
 # 写法说明，形如：
 # `域名规则,匹配规则`
 # 如：
-# DOMAIN-SUFFIX,google.com
+# DOMAIN-SUFFIX,baidu.com
 # 含义为：匹配后缀为 `google.com` 的所有网站
 
 # Clash规则支持的域名规则有：
@@ -21,3 +21,5 @@
 # - MATCH：全匹配
 
 # 订阅转换链接：https://sub.dler.io/
+
+DOMAIN-SUFFIX,baidu.com

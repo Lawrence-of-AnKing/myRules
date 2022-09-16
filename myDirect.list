@@ -1,11 +1,15 @@
 # myDirect
-# 个人使用的规则，用于个人发现的**不**需要代理的网站
+# 个人使用的规则，用于个人发现的不需要代理的网站
 
 # 写法说明，形如：
 # `域名规则,匹配规则`
 # 如：
 # DOMAIN-SUFFIX,baidu.com
 # 含义为：匹配后缀为 `google.com` 的所有网站
+
+# 因为要兼顾圈X，所以会在域名后面加上对应规则的名字，形如：
+# DOMAIN-SUFFIX,ip138.com,myDirect
+# 实测对Clash的解析无影响
 
 # Clash规则支持的域名规则有：
 # - DOMAIN-SUFFIX：域名后缀匹配
@@ -23,7 +27,7 @@
 # 订阅转换链接：https://sub.dler.io/
 
 # 测试
-DOMAIN-SUFFIX,ip138.com,myDirect
+# DOMAIN-SUFFIX,ip138.com,myDirect
 
 # Apple
 # 一般国内Apple肯定正常,不需要开代理
@@ -45,13 +49,3 @@ DOMAIN-SUFFIX,icloud.com.cn,myDirect
 DOMAIN-SUFFIX,itunes.com,myDirect
 DOMAIN-SUFFIX,me.com,myDirect
 DOMAIN-SUFFIX,mzstatic.com,myDirect
-IP-CIDR,17.0.0.0/8,no-resolve
-IP-CIDR,63.92.224.0/19,no-resolve
-IP-CIDR,65.199.22.0/23,no-resolve
-IP-CIDR,139.178.128.0/18,no-resolve
-IP-CIDR,144.178.0.0/19,no-resolve
-IP-CIDR,144.178.36.0/22,no-resolve
-IP-CIDR,144.178.48.0/20,no-resolve
-IP-CIDR,192.35.50.0/24,no-resolve
-IP-CIDR,198.183.17.0/24,no-resolve
-IP-CIDR,205.180.175.0/24,no-resolve

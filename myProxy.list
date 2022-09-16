@@ -22,13 +22,6 @@
 
 # 订阅转换链接：https://sub.dler.io/
 
-# 内容：Sony
-DOMAIN-SUFFIX,playstation.com,myProxy
-DOMAIN-SUFFIX,playstation.net,myProxy
-DOMAIN-SUFFIX,playstationnetwork.com,myProxy
-DOMAIN-SUFFIX,sony.com,myProxy
-DOMAIN-SUFFIX,sonyentertainmentnetwork.com,myProxy
-
 # 内容：SteamCN
 DOMAIN,csgo.wmsj.cn,myProxy
 DOMAIN,dl.steam.clngaa.com,myProxy

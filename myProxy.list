@@ -1,4 +1,4 @@
-# myRules
+# myProxy
 # 个人使用的规则，用于个人发现的需要代理的网站
 
 # 写法说明，形如：
@@ -23,25 +23,25 @@
 # 订阅转换链接：https://sub.dler.io/
 
 # 内容：Sony
-DOMAIN-SUFFIX,playstation.com
-DOMAIN-SUFFIX,playstation.net
-DOMAIN-SUFFIX,playstationnetwork.com
-DOMAIN-SUFFIX,sony.com
-DOMAIN-SUFFIX,sonyentertainmentnetwork.com
+DOMAIN-SUFFIX,playstation.com,myProxy
+DOMAIN-SUFFIX,playstation.net,myProxy
+DOMAIN-SUFFIX,playstationnetwork.com,myProxy
+DOMAIN-SUFFIX,sony.com,myProxy
+DOMAIN-SUFFIX,sonyentertainmentnetwork.com,myProxy
 
 # 内容：SteamCN
-DOMAIN,csgo.wmsj.cn
-DOMAIN,dl.steam.clngaa.com
-DOMAIN,dl.steam.ksyna.com
-DOMAIN,dota2.wmsj.cn
-DOMAIN,st.dl.bscstorage.net
-DOMAIN,st.dl.eccdnx.com
-DOMAIN,st.dl.pinyuncloud.com
-DOMAIN,steampipe.steamcontent.tnkjmec.com
-DOMAIN,steampowered.com.8686c.com
-DOMAIN,steamstatic.com.8686c.com
-DOMAIN,wmsjsteam.com
-DOMAIN-SUFFIX,cm.steampowered.com
-DOMAIN-SUFFIX,steamchina.com
-DOMAIN-SUFFIX,steamcontent.com
-DOMAIN-SUFFIX,steamusercontent.com
+DOMAIN,csgo.wmsj.cn,myProxy
+DOMAIN,dl.steam.clngaa.com,myProxy
+DOMAIN,dl.steam.ksyna.com,myProxy
+DOMAIN,dota2.wmsj.cn,myProxy
+DOMAIN,st.dl.bscstorage.net,myProxy
+DOMAIN,st.dl.eccdnx.com,myProxy
+DOMAIN,st.dl.pinyuncloud.com,myProxy
+DOMAIN,steampipe.steamcontent.tnkjmec.com,myProxy
+DOMAIN,steampowered.com.8686c.com,myProxy
+DOMAIN,steamstatic.com.8686c.com,myProxy
+DOMAIN,wmsjsteam.com,myProxy
+DOMAIN-SUFFIX,cm.steampowered.com,myProxy
+DOMAIN-SUFFIX,steamchina.com,myProxy
+DOMAIN-SUFFIX,steamcontent.com,myProxy
+DOMAIN-SUFFIX,steamusercontent.com,myProxy

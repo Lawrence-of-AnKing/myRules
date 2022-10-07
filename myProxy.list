@@ -22,6 +22,9 @@
 
 # 订阅转换链接：https://sub.dler.io/
 
+# Mac破解软件网站
+DOMAIN, apps.cmacked.com, myProxy
+
 # 内容：SteamCN
 DOMAIN,csgo.wmsj.cn,myProxy
 DOMAIN,dl.steam.clngaa.com,myProxy

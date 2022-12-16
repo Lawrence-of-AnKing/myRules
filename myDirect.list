@@ -49,3 +49,12 @@ DOMAIN-SUFFIX,icloud.com.cn,myDirect
 DOMAIN-SUFFIX,itunes.com,myDirect
 DOMAIN-SUFFIX,me.com,myDirect
 DOMAIN-SUFFIX,mzstatic.com,myDirect
+
+# Notion
+# 已在Hosts中添加了如下Hosts：
+# 119.28.13.121 www.notion.so
+# 119.28.13.121 msgstore.www.notion.so
+# 该Hosts使用 [Notion Faster by Jerry](https://www.notionfaster.org/) 的服务，已经可以加速Notion
+# 所以不需要代理Notion，直接访问即可
+DOMAIN,notion.so,myDirect
+DOMAIN,msgstore.www.notion.so,myDirect

@@ -33,6 +33,10 @@ https://sub.dler.io/sub?target=clash&url=api.dingyue1.com%2F1234567%7Capi.dingyu
 
 将新的链接导入Clash即可。
 
+下面是结果：
+
+![2022-12-16-110320](https://cdn.jsdelivr.net/gh/Lawrence-of-AnKing/ImgBank@main/MdImg/2022/12/2022-12-16-110320.png)
+
 在GitHub上更改的配置文件，会随着订阅链接的更新而自动反映在规则上。
 
 每次只需要在GitHub上更改配置文件即可。

@@ -45,3 +45,7 @@ DOMAIN-SUFFIX,steamusercontent.com,myProxy
 # Parallels Desktop
 # PD官网、Mac虚拟机
 DOMAIN-SUFFIX,parallels.com,myProxy
+
+# PikPak
+# 磁力离线工具
+DOMAIN-SUFFIX,mypikpak.com,myProxy

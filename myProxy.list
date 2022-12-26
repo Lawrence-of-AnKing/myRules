@@ -41,3 +41,7 @@ DOMAIN-SUFFIX,cm.steampowered.com,myProxy
 DOMAIN-SUFFIX,steamchina.com,myProxy
 DOMAIN-SUFFIX,steamcontent.com,myProxy
 DOMAIN-SUFFIX,steamusercontent.com,myProxy
+
+# Parallels Desktop
+# PD官网、Mac虚拟机
+DOMAIN-SUFFIX,parallels.com,myProxy

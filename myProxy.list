@@ -53,3 +53,7 @@ DOMAIN-SUFFIX,mypikpak.com,myProxy
 # Setapp
 # APP订阅网站，一次订阅多个APP
 DOMAIN-SUFFIX,setapp.com,myProxy
+
+# HomeBrew
+# macOS的包管理器，其主页。
+DOMAIN-SUFFIX,brew.sh,myProxy

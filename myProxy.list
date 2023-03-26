@@ -57,3 +57,7 @@ DOMAIN-SUFFIX,setapp.com,myProxy
 # HomeBrew
 # macOS的包管理器，其主页。
 DOMAIN-SUFFIX,brew.sh,myProxy
+
+# cip.cc
+# 查看当前IP和运营商信息
+DOMAIN-SUFFIX,cip.cc,myProxy

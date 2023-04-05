@@ -65,3 +65,7 @@ DOMAIN-SUFFIX,cip.cc,myProxy
 # onedrive.live.com
 # OneDrive网页版
 DOMAIN-SUFFIX, onedrive.live.com,myProxy
+
+# EastmanReference
+# 一个编程参考网站，主要看里面的 AppleScript 全键位码：https://eastmanreference.com/complete-list-of-applescript-key-codes
+DOMAIN-SUFFIX, eastmanreference.com, myProxy

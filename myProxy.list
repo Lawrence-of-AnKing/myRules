@@ -69,3 +69,7 @@ DOMAIN-SUFFIX, onedrive.live.com,myProxy
 # EastmanReference
 # 一个编程参考网站，主要看里面的 AppleScript 全键位码：https://eastmanreference.com/complete-list-of-applescript-key-codes
 DOMAIN-SUFFIX, eastmanreference.com, myProxy
+
+# docs.rs
+# 编程文档类网站
+DOMAIN-SUFFIX, docs.rs, myProxy

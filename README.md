@@ -2,7 +2,7 @@
 
 个人使用的代理分流规则，包括需要代理的网站和不需要代理的网站。
 
-要使用此规则，先前往 `https://sub.dler.io/` ，获取转换后的订阅链接。
+要使用此规则，先前往 <https://sub.dler.io/> ，获取转换后的订阅链接。
 
 然后，复制 `clashRules.ini` 的RAW地址：
 
@@ -10,7 +10,7 @@
 https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/main/clashRules.ini
 ```
 
-前往 `https://www.urlencoder.org/` ，获取转码后的链接：
+前往 <https://www.urlencoder.org/> ，获取转码后的链接：
 
 ```Shell
 https%3A%2F%2Fraw.githubusercontent.com%2FLawrenceLiuQuanzhou%2FmyRules%2Fmain%2FclashRules.ini

@@ -58,3 +58,7 @@ DOMAIN-SUFFIX,mzstatic.com,myDirect
 # 所以不需要代理Notion，直接访问即可
 DOMAIN,notion.so,myDirect
 DOMAIN,msgstore.www.notion.so,myDirect
+
+# HuggingFace
+# AI 绘图网站
+DOMAIN-SUFFIX, huggingface.co, myDirect

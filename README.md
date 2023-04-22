@@ -13,7 +13,7 @@ https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/main/clashRules.ini
 前往 <https://www.urlencoder.org/> ，获取转码后的链接：
 
 ```Shell
-https%3A%2F%2Fraw.githubusercontent.com%2FLawrenceLiuQuanzhou%2FmyRules%2Fmain%2FclashRules.ini
+https%3A%2F%2Fraw.githubusercontent.com%2FLawrence-of-AnKing%2FmyRules%2Fmain%2FclashRules.ini
 ```
 
 预留一下策略组配置文件地址位置，在订阅链接的基础上加上下面这串代码：

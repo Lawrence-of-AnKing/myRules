@@ -73,3 +73,9 @@ DOMAIN-SUFFIX, eastmanreference.com, myProxy
 # docs.rs
 # 编程文档类网站
 DOMAIN-SUFFIX, docs.rs, myProxy
+
+# steamcommunity.com
+# Steam 社区
+DOMAIN-SUFFIX, steamcommunity.com, myProxy
+
+# 编程文档类网站

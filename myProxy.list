@@ -74,8 +74,11 @@ DOMAIN-SUFFIX, eastmanreference.com, myProxy
 # 编程文档类网站
 DOMAIN-SUFFIX, docs.rs, myProxy
 
-# steamcommunity.com
-# Steam 社区
+# Steam 相关
+DOMAIN-SUFFIX, steampowered.com, myProxy
 DOMAIN-SUFFIX, steamcommunity.com, myProxy
-
-# 编程文档类网站
+DOMAIN-SUFFIX, steamgames.com, myProxy
+DOMAIN-SUFFIX, steamusercontent.com, myProxy
+DOMAIN-SUFFIX, steamcontent.com, myProxy
+DOMAIN-SUFFIX, steamstatic.com, myProxy
+DOMAIN-SUFFIX,akamaihd.net, myProxy

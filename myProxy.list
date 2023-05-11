@@ -25,7 +25,8 @@
 # Mac破解软件网站
 DOMAIN, apps.cmacked.com, myProxy
 
-# 内容：SteamCN
+# Steam 相关
+## Steam 中文
 DOMAIN,csgo.wmsj.cn,myProxy
 DOMAIN,dl.steam.clngaa.com,myProxy
 DOMAIN,dl.steam.ksyna.com,myProxy
@@ -41,6 +42,14 @@ DOMAIN-SUFFIX,cm.steampowered.com,myProxy
 DOMAIN-SUFFIX,steamchina.com,myProxy
 DOMAIN-SUFFIX,steamcontent.com,myProxy
 DOMAIN-SUFFIX,steamusercontent.com,myProxy
+## Steam 国际
+DOMAIN-SUFFIX, steampowered.com, myProxy
+DOMAIN-SUFFIX, steamcommunity.com, myProxy
+DOMAIN-SUFFIX, steamgames.com, myProxy
+DOMAIN-SUFFIX, steamusercontent.com, myProxy
+DOMAIN-SUFFIX, steamcontent.com, myProxy
+DOMAIN-SUFFIX, steamstatic.com, myProxy
+DOMAIN-SUFFIX,akamaihd.net, myProxy
 
 # Parallels Desktop
 # PD官网、Mac虚拟机
@@ -73,12 +82,3 @@ DOMAIN-SUFFIX, eastmanreference.com, myProxy
 # docs.rs
 # 编程文档类网站
 DOMAIN-SUFFIX, docs.rs, myProxy
-
-# Steam 相关
-DOMAIN-SUFFIX, steampowered.com, myProxy
-DOMAIN-SUFFIX, steamcommunity.com, myProxy
-DOMAIN-SUFFIX, steamgames.com, myProxy
-DOMAIN-SUFFIX, steamusercontent.com, myProxy
-DOMAIN-SUFFIX, steamcontent.com, myProxy
-DOMAIN-SUFFIX, steamstatic.com, myProxy
-DOMAIN-SUFFIX,akamaihd.net, myProxy

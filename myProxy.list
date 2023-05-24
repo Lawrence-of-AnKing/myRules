@@ -25,6 +25,10 @@
 # Mac破解软件网站
 DOMAIN, apps.cmacked.com, myProxy
 
+# 谷歌
+## 谷歌翻译
+DOMAIN, translate.google.com, myProxy
+
 # Steam 相关
 ## Steam 中文
 DOMAIN,csgo.wmsj.cn,myProxy

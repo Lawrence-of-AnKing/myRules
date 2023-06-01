@@ -90,3 +90,8 @@ DOMAIN-SUFFIX, docs.rs, myProxy
 # Raycast
 # 快捷操作软件
 DOMAIN-SUFFIX, raycast.com, myProxy
+
+# OpenAI
+# AI 聊天机器人
+DOMAIN-SUFFIX, openai.com, myProxy
+DOMAIN-SUFFIX, chat.openai.com, myProxy

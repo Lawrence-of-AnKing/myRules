@@ -28,6 +28,8 @@ DOMAIN, apps.cmacked.com, myProxy
 # 谷歌
 ## 谷歌翻译
 DOMAIN, translate.google.com, myProxy
+## 谷歌全部
+DOMAIN, google.com, myProxy
 
 # Steam 相关
 ## Steam 中文

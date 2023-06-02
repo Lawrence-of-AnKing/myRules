@@ -89,7 +89,8 @@ DOMAIN-SUFFIX, docs.rs, myProxy
 
 # Raycast
 # 快捷操作软件
-DOMAIN-SUFFIX, raycast.com, myProxy
+# 2023.06.02 似乎添加代理后，反而无法下载插件了
+# DOMAIN-SUFFIX, raycast.com, myProxy
 
 # OpenAI
 # AI 聊天机器人

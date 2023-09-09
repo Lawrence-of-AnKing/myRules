@@ -93,3 +93,7 @@ DOMAIN-SUFFIX, docs.rs, myProxy
 # 快捷操作软件
 # 2023.06.02 似乎添加代理后，反而无法下载插件了
 # DOMAIN-SUFFIX, raycast.com, myProxy
+
+# 预览插件
+# macOS 上的“预览”插件网站，支持预览更多文件格式
+quicklookplugins.com

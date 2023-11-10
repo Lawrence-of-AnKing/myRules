@@ -18,13 +18,11 @@
 https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/main/clashRules.ini
 ```
 
-前往 <https://www.urlencoder.org/> ，对 `clashRules.ini` 进行转码，得到：
+前往 <https://www.urlencoder.org/> ，对 `clashRules.ini` 进行转码，得到“链接B”：
 
 ```Shell
 https%3A%2F%2Fraw.githubusercontent.com%2FLawrence-of-AnKing%2FmyRules%2Fmain%2FclashRules.ini
 ```
-
-我们称为“链接B”。
 
 最后，用“链接B”替换掉“链接A”中的“peizhiwenjian”字样，得到包含分流规则的链接。
 

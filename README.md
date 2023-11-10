@@ -4,7 +4,7 @@
 
 要使用此规则，先前往 <https://sub.dler.io/> ，获取转换后的订阅链接。
 
-在订阅链接的基础上加上下面这串代码：
+在订阅链接后面加上下面这串代码：
 
 ```Shell
 &insert=false&config=peizhiwenjian&emoji=true&list=false&udp=false&tfo=false&scv=false&fdn=false&sort=false

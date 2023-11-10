@@ -10,7 +10,7 @@
 &insert=false&config=peizhiwenjian&emoji=true&list=false&udp=false&tfo=false&scv=false&fdn=false&sort=false
 ```
 
-得到==链接A==。
+得到“链接A”。
 
 然后，复制 `clashRules.ini` 的RAW地址：
 
@@ -24,9 +24,9 @@ https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/main/clashRules.ini
 https%3A%2F%2Fraw.githubusercontent.com%2FLawrence-of-AnKing%2FmyRules%2Fmain%2FclashRules.ini
 ```
 
-我们称为==链接B==。
+我们称为“链接B”。
 
-最后，用==链接B==替换掉==链接A==中的“peizhiwenjian”字样，得到包含分流规则的链接。
+最后，用“链接B”替换掉“链接A”中的“peizhiwenjian”字样，得到包含分流规则的链接。
 
 将新的链接导入Clash即可。
 

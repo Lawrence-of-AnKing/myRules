@@ -50,7 +50,7 @@ DOMAIN-SUFFIX,steamcontent.com,myProxy
 DOMAIN-SUFFIX,steamusercontent.com,myProxy
 ## Steam 国际
 DOMAIN-SUFFIX, steampowered.com, myProxy
-DOMAIN-SUFFIX, steamcommunity.com, myProxy
+#DOMAIN-SUFFIX, steamcommunity.com, myProxy
 DOMAIN-SUFFIX, steamgames.com, myProxy
 DOMAIN-SUFFIX, steamusercontent.com, myProxy
 DOMAIN-SUFFIX, steamcontent.com, myProxy

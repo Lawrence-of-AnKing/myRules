@@ -49,13 +49,13 @@ DOMAIN-SUFFIX,steamchina.com,myProxy
 DOMAIN-SUFFIX,steamcontent.com,myProxy
 DOMAIN-SUFFIX,steamusercontent.com,myProxy
 ## Steam 国际
-DOMAIN-SUFFIX, steampowered.com, myProxy
+#DOMAIN-SUFFIX, steampowered.com, myProxy
 #DOMAIN-SUFFIX, steamcommunity.com, myProxy
-DOMAIN-SUFFIX, steamgames.com, myProxy
-DOMAIN-SUFFIX, steamusercontent.com, myProxy
-DOMAIN-SUFFIX, steamcontent.com, myProxy
-DOMAIN-SUFFIX, steamstatic.com, myProxy
-DOMAIN-SUFFIX,akamaihd.net, myProxy
+#DOMAIN-SUFFIX, steamgames.com, myProxy
+#DOMAIN-SUFFIX, steamusercontent.com, myProxy
+#DOMAIN-SUFFIX, steamcontent.com, myProxy
+#DOMAIN-SUFFIX, steamstatic.com, myProxy
+#DOMAIN-SUFFIX,akamaihd.net, myProxy
 
 # Parallels Desktop
 # PD官网、Mac虚拟机

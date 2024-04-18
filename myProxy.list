@@ -97,3 +97,6 @@ DOMAIN-SUFFIX, docs.rs, myProxy
 # 预览插件
 # macOS 上的“预览”插件网站，支持预览更多文件格式
 quicklookplugins.com
+
+# winget 下载软件
+download.kde.org

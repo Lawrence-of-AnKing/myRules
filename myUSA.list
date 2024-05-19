@@ -29,6 +29,6 @@ DOMAIN-SUFFIX, chat.openai.com, myUSA
 
 # Google Gemini
 # Google 的 AI 服务，最好是美国 IP
-DOMAIN-SUFFIX, aistudio.google.com
-DOMAIN-SUFFIX, *.googleapis.com
-DOMAIN-SUFFIX, generativelanguage.googleapis.com
+DOMAIN-SUFFIX, aistudio.google.com, myUSA
+DOMAIN-SUFFIX, *.googleapis.com, myUSA
+DOMAIN-SUFFIX, generativelanguage.googleapis.com, myUSA

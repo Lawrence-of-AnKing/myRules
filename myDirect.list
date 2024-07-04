@@ -67,5 +67,3 @@ DOMAIN-SUFFIX, huggingface.co, myDirect
 # 当百度觉得IP不对时，就会疯狂弹验证码，十分影响体验。
 DOMAIN-SUFFIX,baidu.com
 
-# GitHub 加速，不用代理
-DOMAIN-SUFFIX, jsdelivr.net

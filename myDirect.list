@@ -70,3 +70,6 @@ DOMAIN-SUFFIX,baidu.com
 # GitHub 代理
 # fastly.jsdelivr.net ，GitHub静态资源代理
 DOMAIN-SUFFIX, fastly.jsdelivr.net
+
+# PikPak 直连
+DOMAIN,dl-a10b-,DIRECT

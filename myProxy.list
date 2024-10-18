@@ -63,12 +63,12 @@ DOMAIN-SUFFIX,parallels.com,myProxy
 
 # PikPak
 # 磁力离线工具
+DOMAIN-SUFFIX,, api-drive.mypikpak.com，Direct
 DOMAIN-SUFFIX,mypikpak.com,myProxy
 DOMAIN-SUFFIX,mypikpak.net
 DOMAIN-SUFFIX,user.mypikpak.com
 DOMAIN-SUFFIX,access.mypikpak.com
-DOMAIN-SUFFIX,, api-drive.mypikpak.com，Direct
-
+DOMAIN-KEYWORD,dl-a10b-,DIRECT
 
 # Setapp
 # APP订阅网站，一次订阅多个APP

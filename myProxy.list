@@ -63,6 +63,8 @@ DOMAIN-SUFFIX,parallels.com,myProxy
 
 # PikPak
 # 磁力离线工具
+# 相关直连位于 myDirect
+# 因为直连链接与登录链接采用同一后缀，所以不能去引用，不然会走代理
 'DOMAIN-SUFFIX,mypikpak.com,myProxy'
 'DOMAIN-SUFFIX,mypikpak.net,myProxy'
 'DOMAIN-SUFFIX,user.mypikpak.com,myProxy'

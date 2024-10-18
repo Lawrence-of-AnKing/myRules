@@ -72,4 +72,5 @@ DOMAIN-SUFFIX,baidu.com
 DOMAIN-SUFFIX, fastly.jsdelivr.net
 
 # PikPak 直连
-DOMAIN,dl-a10b-,DIRECT
+DOMAIN-SUFFIX,, api-drive.mypikpak.com，Direct
+DOMAIN-KEYWORD,dl-a10b-,DIRECT

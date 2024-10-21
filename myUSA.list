@@ -32,3 +32,7 @@ DOMAIN-SUFFIX, chat.openai.com, myUSA
 DOMAIN-SUFFIX, aistudio.google.com, myUSA
 DOMAIN-SUFFIX, *.googleapis.com, myUSA
 DOMAIN-SUFFIX, generativelanguage.googleapis.com, myUSA
+
+# HAnime
+
+DOMAIN-SUFFIX,hanime1.me,myUSA

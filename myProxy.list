@@ -88,23 +88,23 @@ DOMAIN-SUFFIX, onedrive.live.com,myProxy
 
 # EastmanReference
 # 一个编程参考网站，主要看里面的 AppleScript 全键位码：https://eastmanreference.com/complete-list-of-applescript-key-codes
-DOMAIN-SUFFIX, eastmanreference.com, myProxy
+DOMAIN-SUFFIX,eastmanreference.com,myProxy
 
 # docs.rs
 # 编程文档类网站
-DOMAIN-SUFFIX, docs.rs, myProxy
+DOMAIN-SUFFIX,docs.rs,myProxy
 
 # Raycast
 # 快捷操作软件
 # 2023.06.02 似乎添加代理后，反而无法下载插件了
-# DOMAIN-SUFFIX, raycast.com, myProxy
+# DOMAIN-SUFFIX,raycast.com,myProxy
 
 # 预览插件
 # macOS 上的“预览”插件网站，支持预览更多文件格式
-quicklookplugins.com
+DOMAIN-SUFFIX,quicklookplugins.com,myProxy
 
 # winget 下载软件
-download.kde.org
+DOMAIN-SUFFIX,download.kde.org,myProxy
 
 # 俄罗斯下载软件
-downloadmaster.com
+DOMAIN-SUFFIX,downloadmaster.com,myProxy

@@ -2,7 +2,7 @@
 
 个人使用的代理分流规则，包括需要代理的网站和不需要代理的网站。
 
-要使用此规则，先前往 <https://acl4ssr-sub.github.io/> ，获取转换后的订阅链接。
+要使用此规则，先前往 [https://acl4ssr-sub.github.io/](https://sub.ccsub.site/) ，获取转换后的订阅链接。
 
 在订阅链接后面加上下面这串代码：
 

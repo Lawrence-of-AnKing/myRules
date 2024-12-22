@@ -46,7 +46,7 @@ DOMAIN, steamstatic.com.8686c.com, myProxy
 DOMAIN, wmsjsteam.com, myProxy
 #DOMAIN-SUFFIX, cm.steampowered.com, myProxy
 ## Steam 国际
-#DOMAIN-SUFFIX, steampowered.com, myProxy
+DOMAIN-SUFFIX, steampowered.com, myProxy
 DOMAIN-SUFFIX, steamcommunity.com, myProxy
 #DOMAIN-SUFFIX, steamgames.com, myProxy
 #DOMAIN-SUFFIX, steamusercontent.com, myProxy

@@ -2,13 +2,13 @@
 # 个人使用的规则，用于个人发现的不需要代理的网站
 
 # 写法说明，形如：
-# `域名规则,匹配规则`
+# `域名规则, 匹配规则`
 # 如：
-# DOMAIN-SUFFIX,baidu.com
+# DOMAIN-SUFFIX, baidu.com
 # 含义为：匹配后缀为 `google.com` 的所有网站
 
 # 因为要兼顾圈X，所以会在域名后面加上对应规则的名字，形如：
-# DOMAIN-SUFFIX,ip138.com,myDirect
+# DOMAIN-SUFFIX, ip138.com, myDirect
 # 实测对Clash的解析无影响
 
 # Clash规则支持的域名规则有：
@@ -27,28 +27,28 @@
 # 订阅转换链接：https://sub.dler.io/
 
 # 测试
-# DOMAIN-SUFFIX,ip138.com,myDirect
+# DOMAIN-SUFFIX, ip138.com, myDirect
 
 # Apple
-# 一般国内Apple肯定正常,不需要开代理
-DOMAIN,apple.comscoreresearch.com,myDirect
-DOMAIN-SUFFIX,aaplimg.com,myDirect
-DOMAIN-SUFFIX,akadns.net,myDirect
-DOMAIN-SUFFIX,apple-cloudkit.com,myDirect
-DOMAIN-SUFFIX,apple-mapkit.com,myDirect
-DOMAIN-SUFFIX,apple.co,myDirect
-DOMAIN-SUFFIX,apple.com,myDirect
-DOMAIN-SUFFIX,apple.com.cn,myDirect
-DOMAIN-SUFFIX,apple.news,myDirect
-DOMAIN-SUFFIX,appstore.com,myDirect
-DOMAIN-SUFFIX,cdn-apple.com,myDirect
-DOMAIN-SUFFIX,crashlytics.com,myDirect
-DOMAIN-SUFFIX,icloud-content.com,myDirect
-DOMAIN-SUFFIX,icloud.com,myDirect
-DOMAIN-SUFFIX,icloud.com.cn,myDirect
-DOMAIN-SUFFIX,itunes.com,myDirect
-DOMAIN-SUFFIX,me.com,myDirect
-DOMAIN-SUFFIX,mzstatic.com,myDirect
+# 一般国内Apple肯定正常, 不需要开代理
+DOMAIN, apple.comscoreresearch.com, myDirect
+DOMAIN-SUFFIX, aaplimg.com, myDirect
+DOMAIN-SUFFIX, akadns.net, myDirect
+DOMAIN-SUFFIX, apple-cloudkit.com, myDirect
+DOMAIN-SUFFIX, apple-mapkit.com, myDirect
+DOMAIN-SUFFIX, apple.co, myDirect
+DOMAIN-SUFFIX, apple.com, myDirect
+DOMAIN-SUFFIX, apple.com.cn, myDirect
+DOMAIN-SUFFIX, apple.news, myDirect
+DOMAIN-SUFFIX, appstore.com, myDirect
+DOMAIN-SUFFIX, cdn-apple.com, myDirect
+DOMAIN-SUFFIX, crashlytics.com, myDirect
+DOMAIN-SUFFIX, icloud-content.com, myDirect
+DOMAIN-SUFFIX, icloud.com, myDirect
+DOMAIN-SUFFIX, icloud.com.cn, myDirect
+DOMAIN-SUFFIX, itunes.com, myDirect
+DOMAIN-SUFFIX, me.com, myDirect
+DOMAIN-SUFFIX, mzstatic.com, myDirect
 
 # Notion
 # 已在Hosts中添加了如下Hosts：
@@ -56,20 +56,20 @@ DOMAIN-SUFFIX,mzstatic.com,myDirect
 # 119.28.13.121 msgstore.www.notion.so
 # 该Hosts使用 Notion Faster by Jerry 的服务，已经可以加速Notion
 # 所以不需要代理Notion，直接访问即可
-DOMAIN,notion.so,myDirect
-DOMAIN,msgstore.www.notion.so,myDirect
+DOMAIN, notion.so, myDirect
+DOMAIN, msgstore.www.notion.so, myDirect
 
 # HuggingFace
 # AI 绘图网站
-DOMAIN-SUFFIX,huggingface.co,myDirect
+DOMAIN-SUFFIX, huggingface.co, myDirect
 
 # 百度相关网站
 # 当百度觉得IP不对时，就会疯狂弹验证码，十分影响体验。
-DOMAIN-SUFFIX,baidu.com,myDirect
+DOMAIN-SUFFIX, baidu.com, myDirect
 
 # GitHub 代理
 # fastly.jsdelivr.net，GitHub静态资源代理
-DOMAIN-SUFFIX,fastly.jsdelivr.net,myDirect
+DOMAIN-SUFFIX, fastly.jsdelivr.net, myDirect
 
 # PikPak 直连
 DOMAIN-SUFFIX, api-drive.mypikpak.com, myDirect
@@ -145,4 +145,3 @@ DOMAIN-SUFFIX, steam.cdn.orcon.net.nz, myDirect
 DOMAIN-SUFFIX, steam.cdn.slingshot.co.nz, myDirect
 ### webra
 DOMAIN-SUFFIX, steam.cdn.webra.ru, myDirect
-

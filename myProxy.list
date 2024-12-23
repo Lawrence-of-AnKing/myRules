@@ -2,9 +2,9 @@
 # 个人使用的规则，用于个人发现的需要代理的网站
 
 # 写法说明，形如：
-# `域名规则,匹配规则`
+# `域名规则，匹配规则`
 # 如：
-# DOMAIN-SUFFIX,google.com
+# DOMAIN-SUFFIX, google.com
 # 含义为：匹配后缀为 `google.com` 的所有网站
 
 # Clash规则支持的域名规则有：
@@ -38,52 +38,52 @@ DOMAIN-SUFFIX, steamcommunity.com, myProxy
 
 # Parallels Desktop
 # PD官网、Mac虚拟机
-DOMAIN-SUFFIX,parallels.com,myProxy
+DOMAIN-SUFFIX, parallels.com, myProxy
 
 # PikPak
 # 磁力离线工具
 # 相关直连位于 myDirect
-# 因为直连链接与登录链接采用同一后缀，所以不能去引用，不然会走代理
-'DOMAIN-SUFFIX,mypikpak.com,myProxy'
-'DOMAIN-SUFFIX,mypikpak.net,myProxy'
-'DOMAIN-SUFFIX,user.mypikpak.com,myProxy'
-'DOMAIN-SUFFIX,access.mypikpak.com,myProxy'
+# 因为直连链接与登录链接采用同一后缀，所以不能去引号，不然会走代理
+'DOMAIN-SUFFIX, mypikpak.com, myProxy'
+'DOMAIN-SUFFIX, mypikpak.net, myProxy'
+'DOMAIN-SUFFIX, user.mypikpak.com, myProxy'
+'DOMAIN-SUFFIX, access.mypikpak.com, myProxy'
 
 # Setapp
 # APP订阅网站，一次订阅多个APP
-DOMAIN-SUFFIX,setapp.com,myProxy
+DOMAIN-SUFFIX, setapp.com, myProxy
 
 # HomeBrew
 # macOS的包管理器，其主页。
-DOMAIN-SUFFIX,brew.sh,myProxy
+DOMAIN-SUFFIX, brew.sh, myProxy
 
 # cip.cc
 # 查看当前IP和运营商信息
-DOMAIN-SUFFIX,cip.cc,myProxy
+DOMAIN-SUFFIX, cip.cc, myProxy
 
 # onedrive.live.com
 # OneDrive网页版
-DOMAIN-SUFFIX, onedrive.live.com,myProxy
+DOMAIN-SUFFIX, onedrive.live.com, myProxy
 
 # EastmanReference
 # 一个编程参考网站，主要看里面的 AppleScript 全键位码：https://eastmanreference.com/complete-list-of-applescript-key-codes
-DOMAIN-SUFFIX,eastmanreference.com,myProxy
+DOMAIN-SUFFIX, eastmanreference.com, myProxy
 
 # docs.rs
 # 编程文档类网站
-DOMAIN-SUFFIX,docs.rs,myProxy
+DOMAIN-SUFFIX, docs.rs, myProxy
 
 # Raycast
 # 快捷操作软件
 # 2023.06.02 似乎添加代理后，反而无法下载插件了
-# DOMAIN-SUFFIX,raycast.com,myProxy
+# DOMAIN-SUFFIX, raycast.com, myProxy
 
 # 预览插件
 # macOS 上的“预览”插件网站，支持预览更多文件格式
-DOMAIN-SUFFIX,quicklookplugins.com,myProxy
+DOMAIN-SUFFIX, quicklookplugins.com, myProxy
 
 # winget 下载软件
-DOMAIN-SUFFIX,download.kde.org,myProxy
+DOMAIN-SUFFIX, download.kde.org, myProxy
 
 # 俄罗斯下载软件
-DOMAIN-SUFFIX,downloadmaster.com,myProxy
+DOMAIN-SUFFIX, downloadmaster.com, myProxy

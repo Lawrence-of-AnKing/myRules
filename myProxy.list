@@ -32,27 +32,9 @@ DOMAIN, translate.google.com, myProxy
 DOMAIN, google.com, myProxy
 
 # Steam 相关
-## Steam 中文
-DOMAIN, csgo.wmsj.cn, myProxy
-DOMAIN, dl.steam.clngaa.com, myProxy
-DOMAIN, dl.steam.ksyna.com, myProxy
-DOMAIN, dota2.wmsj.cn, myProxy
-DOMAIN, st.dl.bscstorage.net, myProxy
-DOMAIN, st.dl.eccdnx.com, myProxy
-DOMAIN, st.dl.pinyuncloud.com, myProxy
-DOMAIN, steampipe.steamcontent.tnkjmec.com, myProxy
-DOMAIN, steampowered.com.8686c.com, myProxy
-DOMAIN, steamstatic.com.8686c.com, myProxy
-DOMAIN, wmsjsteam.com, myProxy
-#DOMAIN-SUFFIX, cm.steampowered.com, myProxy
-## Steam 国际
+# Steam 只有部分要走代理，比如steampowerd和steamcommunity，前者是商店，后者是社区，都是会被ban的。但也有部分绝对不能走代理，比如st.dl开头的这些，这些都是下载节点，一但开了，流量就会飞速流逝。
 DOMAIN-SUFFIX, steampowered.com, myProxy
 DOMAIN-SUFFIX, steamcommunity.com, myProxy
-#DOMAIN-SUFFIX, steamgames.com, myProxy
-#DOMAIN-SUFFIX, steamusercontent.com, myProxy
-#DOMAIN-SUFFIX, steamcontent.com, myProxy
-#DOMAIN-SUFFIX, steamstatic.com, myProxy
-#DOMAIN-SUFFIX, akamaihd.net, myProxy
 
 # Parallels Desktop
 # PD官网、Mac虚拟机

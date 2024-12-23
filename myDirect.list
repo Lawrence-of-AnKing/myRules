@@ -72,5 +72,13 @@ DOMAIN-SUFFIX,baidu.com,myDirect
 DOMAIN-SUFFIX,fastly.jsdelivr.net,myDirect
 
 # PikPak 直连
-DOMAIN-SUFFIX,api-drive.mypikpak.com,myDirect
-DOMAIN-KEYWORD,dl-a10b-,myDirect
+DOMAIN-SUFFIX, api-drive.mypikpak.com, myDirect
+DOMAIN-KEYWORD, dl-a10b-, myDirect
+
+# Steam 直连
+DOMAIN-SUFFIX, steamgames.com, myDirect
+DOMAIN-SUFFIX, steamusercontent.com, myDirect
+DOMAIN-SUFFIX, steamcontent.com, myDirect
+DOMAIN-SUFFIX, steamstatic.com, myDirect
+DOMAIN-SUFFIX, akamaihd.net, myDirect
+

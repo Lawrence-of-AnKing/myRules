@@ -37,5 +37,5 @@ DOMAIN-SUFFIX, generativelanguage.googleapis.com, myUSA
 DOMAIN-SUFFIX, hanime1.me, myUSA
 
 # NotebookLM 谷歌出品的AI笔记本
-#DOMAIN-SUFFIX, https://notebooklm.google.com/, myUSA
-DOMAIN-SUFFIX, https://google.com/, myUSA
+DOMAIN-SUFFIX, https://notebooklm.google.com, myUSA
+DOMAIN-SUFFIX, https://google.com, myUSA

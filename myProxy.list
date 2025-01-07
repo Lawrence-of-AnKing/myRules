@@ -28,8 +28,8 @@ DOMAIN, apps.cmacked.com, myProxy
 # 谷歌
 ## 谷歌翻译
 DOMAIN, translate.google.com, myProxy
-## 谷歌全部
-DOMAIN-SUFFIX, google.com, myProxy
+## 谷歌搜索
+DOMAIN, google.com, myProxy
 
 # Steam 相关
 # Steam 只有部分要走代理，比如steampowerd和steamcommunity，前者是商店，后者是社区，都是会被ban的。但也有部分绝对不能走代理，比如st.dl开头的这些，这些都是下载节点，一但开了，流量就会飞速流逝。

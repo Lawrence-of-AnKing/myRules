@@ -29,6 +29,7 @@ DOMAIN, apps.cmacked.com, myProxy
 ## 谷歌翻译
 DOMAIN, translate.google.com, myProxy
 ## 谷歌搜索
+## 谷歌搜索的体验对延迟比较敏感，所以走选择的代理，其余的则走美国线路
 DOMAIN, google.com, myProxy
 
 # Steam 相关

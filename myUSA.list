@@ -33,6 +33,7 @@ DOMAIN-SUFFIX, chat.openai.com, myUSA
 DOMAIN-SUFFIX, aistudio.google.com, myUSA
 DOMAIN-SUFFIX, *.googleapis.com, myUSA
 DOMAIN-SUFFIX, generativelanguage.googleapis.com, myUSA
+DOMAIN-SUFFIX, gemini.google.com, myUSA
 
 ## NotebookLM 谷歌出品的AI笔记本
 DOMAIN-SUFFIX, notebooklm.google.com, myUSA

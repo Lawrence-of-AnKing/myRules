@@ -147,3 +147,7 @@ DOMAIN-SUFFIX, steam.cdn.orcon.net.nz, myDirect
 DOMAIN-SUFFIX, steam.cdn.slingshot.co.nz, myDirect
 ### webra
 DOMAIN-SUFFIX, steam.cdn.webra.ru, myDirect
+
+# GOFILE盘
+DOMAIN-SUFFIX, gofile.io, myDirect
+

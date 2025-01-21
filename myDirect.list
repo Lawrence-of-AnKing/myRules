@@ -83,6 +83,8 @@ DOMAIN-SUFFIX, steamusercontent.com, myDirect
 DOMAIN-SUFFIX, steamcontent.com, myDirect
 DOMAIN-SUFFIX, steamstatic.com, myDirect
 DOMAIN-SUFFIX, akamaihd.net, myDirect
+DOMAIN-SUFFIX, steam-chat.com, myDirect
+DOMAIN-SUFFIX, steamgames.com, myDirect
 ## 中国CDN
 ### 华为云
 DOMAIN-SUFFIX, steampipe.steamcontent.tnkjmec.com, myDirect

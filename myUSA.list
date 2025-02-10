@@ -26,6 +26,7 @@
 # AI 聊天机器人，只允许美国 IP
 DOMAIN-SUFFIX, openai.com, myUSA
 DOMAIN-SUFFIX, chat.openai.com, myUSA
+DOMAIN-SUFFIX, chatgpt.com, myUSA
 
 # 谷歌相关
 ## Google Gemini

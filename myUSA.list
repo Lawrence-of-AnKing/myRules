@@ -31,10 +31,22 @@ DOMAIN-SUFFIX, chatgpt.com, myUSA
 # 谷歌相关
 ## Google Gemini
 ## Google 的 AI 服务，最好是美国 IP
+DOMAIN, ai.google.dev, myUSA
+DOMAIN, alkalimakersuite-pa.clients6.google.com, myUSA
+DOMAIN, makersuite.google.com, myUSA
 DOMAIN-SUFFIX, aistudio.google.com, myUSA
 DOMAIN-SUFFIX, *.googleapis.com, myUSA
 DOMAIN-SUFFIX, generativelanguage.googleapis.com, myUSA
 DOMAIN-SUFFIX, gemini.google.com, myUSA
+DOMAIN-SUFFIX, bard.google.com, myUSA
+DOMAIN-SUFFIX, deepmind.com, myUSA
+DOMAIN-SUFFIX, deepmind.google, myUSA
+DOMAIN-SUFFIX, generativeai.google, myUSA
+DOMAIN-SUFFIX, proactivebackend-pa.googleapis.com, myUSA
+DOMAIN-SUFFIX, apis.google.com, myUSA
+DOMAIN-KEYWORD, colab, myUSA
+DOMAIN-KEYWORD, developerprofiles, myUSA
+DOMAIN-KEYWORD, generativelanguage, myUSA
 
 ## NotebookLM 谷歌出品的AI笔记本
 DOMAIN-SUFFIX, notebooklm.google.com, myUSA

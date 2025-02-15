@@ -88,3 +88,6 @@ DOMAIN-SUFFIX, download.kde.org, myProxy
 
 # 俄罗斯下载软件
 DOMAIN-SUFFIX, downloadmaster.com, myProxy
+
+# 各种wiki
+DOMAIN-SUFFIX, zh.minecraft.wiki, myProxy

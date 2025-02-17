@@ -152,3 +152,7 @@ DOMAIN-SUFFIX, steam.cdn.webra.ru, myDirect
 # GOFILE盘
 DOMAIN-SUFFIX, gofile.io, myDirect
 
+# 刷课
+## 工程水利刷课
+DOMAIN-SUFFIX, aqwx.bosafe.com, myDirect
+

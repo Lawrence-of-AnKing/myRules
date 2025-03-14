@@ -156,3 +156,6 @@ DOMAIN-SUFFIX, gofile.io, myDirect
 ## 工程水利刷课
 DOMAIN-SUFFIX, aqwx.bosafe.com, myDirect
 
+# OCR
+DOMAIN-SUFFIX, sso.openxlab.org.cn, myDirect
+

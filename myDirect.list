@@ -59,10 +59,6 @@ DOMAIN-SUFFIX, mzstatic.com, myDirect
 DOMAIN, notion.so, myDirect
 DOMAIN, msgstore.www.notion.so, myDirect
 
-# HuggingFace
-# AI 绘图网站
-DOMAIN-SUFFIX, huggingface.co, myDirect
-
 # 百度相关网站
 # 当百度觉得IP不对时，就会疯狂弹验证码，十分影响体验。
 DOMAIN-SUFFIX, baidu.com, myDirect

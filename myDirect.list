@@ -155,3 +155,7 @@ DOMAIN-SUFFIX, aqwx.bosafe.com, myDirect
 # OCR
 DOMAIN-SUFFIX, sso.openxlab.org.cn, myDirect
 
+# TopazGigapixelAI
+# 图片AI放大软件的模型下载通道
+DOMAIN-SUFFIX, topazlabs.com, myDirect
+

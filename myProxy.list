@@ -91,4 +91,7 @@ DOMAIN-SUFFIX, downloadmaster.com, myProxy
 
 # 各种wiki
 DOMAIN-SUFFIX, zh.minecraft.wiki, myProxy
+
+# HuggingFace
+# AI 绘图网站
 DOMAIN-SUFFIX, huggingface.co, myProxy

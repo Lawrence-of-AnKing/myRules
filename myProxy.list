@@ -91,6 +91,7 @@ DOMAIN-SUFFIX, downloadmaster.com, myProxy
 
 # 各种wiki
 DOMAIN-SUFFIX, wikipedia.org, myProxy
+DOMAIN-SUFFIX, zh.wikipedia.org, myProxy
 DOMAIN-SUFFIX, zh.minecraft.wiki, myProxy
 DOMAIN-SUFFIX, gamefaqs.gamespot.com, myProxy
 DOMAIN-SUFFIX, blog.spoongraphics.co.uk, myProxy

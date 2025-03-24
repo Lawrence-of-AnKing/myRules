@@ -96,6 +96,8 @@ DOMAIN-SUFFIX, zh.wikipedia.org, myProxy
 DOMAIN-SUFFIX, zh.minecraft.wiki, myProxy
 DOMAIN-SUFFIX, gamefaqs.gamespot.com, myProxy
 DOMAIN-SUFFIX, blog.spoongraphics.co.uk, myProxy
+DOMAIN, 198.35.26.96:443, myProxy
+
 
 # KMAlexander
 # 一个制图笔刷网站，有大量免费商用的优质笔刷，来自各种历史地图

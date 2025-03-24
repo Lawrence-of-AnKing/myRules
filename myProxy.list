@@ -90,7 +90,8 @@ DOMAIN-SUFFIX, download.kde.org, myProxy
 DOMAIN-SUFFIX, downloadmaster.com, myProxy
 
 # 各种wiki
-DOMAIN-KEYWORD, wikipedia.org, myProxy
+DOMAIN-SUFFIX, wikipedia, myProxy
+DOMAIN-SUFFIX, wikimedia.org, myProxy
 DOMAIN-SUFFIX, zh.wikipedia.org, myProxy
 DOMAIN-SUFFIX, zh.minecraft.wiki, myProxy
 DOMAIN-SUFFIX, gamefaqs.gamespot.com, myProxy

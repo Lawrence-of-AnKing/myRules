@@ -105,7 +105,7 @@ DOMAIN-SUFFIX, kmalexander.com, myProxy
 # AI 绘图网站
 DOMAIN-SUFFIX, huggingface.co, myProxy
 # AI API提供商
-DOMAIN-SUFFIX, openrouter.ai, myProxy
+DOMAIN-KEYWORD, openrouter, myProxy
 
 # 猎魔人奈飞网站
 DOMAIN-SUFFIX, witchernetflix.com, myProxy

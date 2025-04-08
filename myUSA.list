@@ -22,11 +22,13 @@
 
 # 订阅转换链接：https://sub.dler.io/
 
-# OpenAI
-# AI 聊天机器人，只允许美国 IP
+# AI相关
+# OpenAI，只允许美国IP
 DOMAIN-SUFFIX, openai.com, myUSA
 DOMAIN-SUFFIX, chat.openai.com, myUSA
 DOMAIN-SUFFIX, chatgpt.com, myUSA
+# OpenRouter，只允许美国IP，包括他的API
+DOMAIN-KEYWORD, openrouter, myUSA
 
 # 谷歌相关
 ## Google Gemini

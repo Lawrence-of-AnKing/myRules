@@ -102,8 +102,10 @@ DOMAIN-SUFFIX, blog.spoongraphics.co.uk, myProxy
 DOMAIN-SUFFIX, kmalexander.com, myProxy
 
 # AI 网站
-# AI 绘图网站
+## AI 绘图网站
 DOMAIN-SUFFIX, huggingface.co, myProxy
+## VS Code 插件 Continue 的工作台
+DOMAIN-SUFFIX, continue.dev, myProxy
 
 # 猎魔人奈飞网站
 DOMAIN-SUFFIX, witchernetflix.com, myProxy

@@ -29,6 +29,8 @@ DOMAIN-SUFFIX, chat.openai.com, myUSA
 DOMAIN-SUFFIX, chatgpt.com, myUSA
 # OpenRouter，只允许美国IP，包括他的API
 DOMAIN-KEYWORD, openrouter.ai, myUSA
+# X.AI 马斯克的 Grok
+DOMAIN-KEYWORD, x.ai, myUSA
 
 # 谷歌相关
 ## Google Gemini

@@ -1,0 +1,11 @@
+{
+  "name": "myrules-subscription-builder",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:subscription": "node scripts/build-subscription.mjs"
+  },
+  "dependencies": {
+    "yaml": "2.9.1"
+  }
+}

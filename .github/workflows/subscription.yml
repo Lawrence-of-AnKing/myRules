@@ -1,0 +1,70 @@
+name: 发布加密订阅
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - reWrite.js
+      - scripts/build-subscription.mjs
+      - scripts/publish-subscription.mjs
+      - distribution/recipient.txt
+      - package.json
+      - package-lock.json
+      - .github/workflows/subscription.yml
+  schedule:
+    - cron: '23 */6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: encrypted-subscription
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      BUILD_DIR: ${{ runner.temp }}/myrules-build
+    steps:
+      - name: 获取规则
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: 准备 Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - name: 安装锁定依赖
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: 生成完整配置
+        env:
+          AIRPORT_SUBSCRIPTION_URL: ${{ secrets.AIRPORT_SUBSCRIPTION_URL }}
+        run: npm run build:subscription
+      - name: 准备并验证 Mihomo
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 \
+            'https://github.com/MetaCubeX/mihomo/releases/download/v1.19.33/mihomo-linux-amd64-compatible-v1.19.33.gz' \
+            --output "$RUNNER_TEMP/mihomo.gz"
+          echo "386508bfb1c72c43b6a0eda73708ecdce82546581b0ebcb16366c53757c622b6  $RUNNER_TEMP/mihomo.gz" | sha256sum --check --status
+          gzip -dc "$RUNNER_TEMP/mihomo.gz" > "$RUNNER_TEMP/mihomo"
+          chmod 755 "$RUNNER_TEMP/mihomo"
+          "$RUNNER_TEMP/mihomo" -t -d "$BUILD_DIR" -f "$BUILD_DIR/config.yaml"
+      - name: 加密并验证格式
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install --yes --no-install-recommends age
+          age --armor --recipients-file distribution/recipient.txt \
+            --output "$BUILD_DIR/config.yaml.age" "$BUILD_DIR/config.yaml"
+          test "$(head -n 1 "$BUILD_DIR/config.yaml.age")" = '-----BEGIN AGE ENCRYPTED FILE-----'
+      - name: 发布到固定分支
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/publish-subscription.mjs

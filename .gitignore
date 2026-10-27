@@ -1,0 +1,6 @@
+node_modules/
+.build/
+*.key
+*identity*.txt
+.env
+.env.*

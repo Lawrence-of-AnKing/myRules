@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      BUILD_DIR: ${{ runner.temp }}/myrules-build
+      BUILD_DIR: .build
     steps:
       - name: 获取规则
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803

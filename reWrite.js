@@ -265,6 +265,8 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,cdn-lfs-us-1.huggingface.co,📥 下载分流",
   "DOMAIN-SUFFIX,cdn-lfs-eu-1.huggingface.co,📥 下载分流",
   "DOMAIN-SUFFIX,prompthero.com,📥 下载分流",
+  // Google Play 国内 APK CDN：现场对照直连正常，海外代理 TLS 超时；不改变登录和 API 分流。
+  "DOMAIN-SUFFIX,xn--ngstr-lra8j.com,DIRECT",
   // 个人代理例外和Steam下载例外
   "DOMAIN,apps.cmacked.com,🌎 个人规则",
   "DOMAIN-SUFFIX,gvt1.com,🌎 个人规则",

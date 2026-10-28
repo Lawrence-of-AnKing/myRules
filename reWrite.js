@@ -13,13 +13,19 @@
 //    尚未保存选择，或已选节点从订阅消失时，默认REJECT；请确认原来使用的节点后再选。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
+// 7. AI专用HTTP/SOCKS入口：127.0.0.1:17903，直接锁定下方ANTHROPIC_FIXED_NODE。
+//    Hermes/pi等需显式连接此入口；不跟随普通策略组、规则或全局/DIRECT模式。
+//    固定节点缺失时入口使用REJECT，不换IP、不回退直连。节点名改变需人工核实后修改常量。
+//    这里只建立入口，不会自动修改应用的代理环境，也不等于浏览器WebRTC/DNS防护。
 //
 // 个人直连/全球直连不再占选择组，已确认的直连规则直接指向DIRECT；基础MRS仍自动更新。
-// 保留现有DNS、TUN、听书、坚果云和下载例外，不修改设备的端口、IPv6或TUN开关。
+// 保留现有DNS、TUN、听书、坚果云和下载例外，不修改设备已有端口、IPv6或TUN开关；另增AI专用入口。
 // 本脚本不是系统级断路保护：FlClash构建失败或退出后的防直连，仍须由独立防火墙/路由器保证。
 
 // 一、Tailscale和内网。Tailnet必须先于一般private规则。
 const TS_PROXY_NAME = "tailnet";
+// 与现有Mac/Windows的Claude出口一致；禁止按排序挑选其他美国节点。
+const ANTHROPIC_FIXED_NODE = "🇺🇲 美国S01 | IEPL | x1.5";
 const TS_AUTH_KEY = ""; // 不在同步脚本里放密钥。
 // 新设备：日志级别info → 对tailnet点测速 → 日志搜索To start → 打开授权链接批准。
 const TAILSCALE_RULES = [
@@ -711,7 +717,10 @@ function main(config) {
   // 节点不足时第二端口拒绝连接，不假装两个账号有独立出口。
   config.listeners = [
     {name:"wb-slot-1", type:"mixed", port:17901, listen:"127.0.0.1", proxy:sg[0] || "REJECT"},
-    {name:"wb-slot-2", type:"mixed", port:17902, listen:"127.0.0.1", proxy:sg[1] || "REJECT"}
+    {name:"wb-slot-2", type:"mixed", port:17902, listen:"127.0.0.1", proxy:sg[1] || "REJECT"},
+    // 直接指定出站，避免普通规则/全局模式或策略组选DIRECT影响模型请求。
+    {name:"ai-locked-us-s01", type:"mixed", port:17903, listen:"127.0.0.1", udp:false,
+      proxy:names.includes(ANTHROPIC_FIXED_NODE) ? ANTHROPIC_FIXED_NODE : "REJECT"}
   ];
   config.rules = [...TAILSCALE_RULES, ...LOCAL_RULES, ...AI_RULES, ...PUSH_RULES, ...ONEDRIVE_RULES, ...APPLE_DIRECT_RULES, ...MICROSOFT_DIRECT_RULES, ...UPDATE_DIRECT_RULES, ...MY_CUSTOM_RULES, ...BASE_RULES];
   if (config.tun) config.tun = Object.assign({},config.tun,TUN_TAILSCALE_SETTINGS);

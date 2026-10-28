@@ -265,8 +265,15 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,cdn-lfs-us-1.huggingface.co,📥 下载分流",
   "DOMAIN-SUFFIX,cdn-lfs-eu-1.huggingface.co,📥 下载分流",
   "DOMAIN-SUFFIX,prompthero.com,📥 下载分流",
-  // Google Play 国内 APK CDN：现场对照直连正常，海外代理 TLS 超时；不改变登录和 API 分流。
-  "DOMAIN-SUFFIX,xn--ngstr-lra8j.com,DIRECT",
+  // 恢复已实测可直连的精确 Google 国内服务，不搬回整个 GoogleCN 集。
+  "DOMAIN,dl.google.com,DIRECT",
+  "DOMAIN,tools.google.com,DIRECT",
+  "DOMAIN,ocsp.pki.goog,DIRECT",
+  "DOMAIN,crl.pki.goog,DIRECT",
+  // Google Play 仅大陆 CDN 直连；其余服务器仍按后续规则分流，避免整域直连误伤海外下载。
+  // 与 v2fly/google-play 的 @cn 条目一致：北京 2x3、上海 ni5、广州 j5o。
+  "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.xn--ngstr-lra8j\\.com$,DIRECT",
+  "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.googlevideo\\.com$,DIRECT",
   // 个人代理例外和Steam下载例外
   "DOMAIN,apps.cmacked.com,🌎 个人规则",
   "DOMAIN-SUFFIX,gvt1.com,🌎 个人规则",
@@ -490,7 +497,8 @@ const BASE_RULES = [
   "RULE-SET,PrivateDomain,DIRECT",
   "RULE-SET,PrivateIP,DIRECT,no-resolve",
   "RULE-SET,ChinaDomain,DIRECT",
-  "RULE-SET,ChinaIP,DIRECT,no-resolve",
+  // 未列入国内域名集的 CDN 也解析实际 IP 后判断归属，不能用 no-resolve 跳过国内兜底。
+  "RULE-SET,ChinaIP,DIRECT",
   "MATCH,🌐 默认代理"
 ];
 
@@ -614,6 +622,11 @@ const DNS_SETTINGS = {
     ]
   },
   "nameserver-policy": {
+    // 与上面的四条精确直连例外配套，避免被 google.com 的海外 fallback 解析接走。
+    "dl.google.com,tools.google.com,ocsp.pki.goog,crl.pki.goog": [
+      "https://dns.alidns.com/dns-query",
+      "223.5.5.5"
+    ],
     "geosite:cn,private": [
       "https://doh.pub/dns-query",
       "223.5.5.5"

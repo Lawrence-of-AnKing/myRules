@@ -13,7 +13,7 @@
 //    尚未保存选择，或已选节点从订阅消失时，默认REJECT；请确认原来使用的节点后再选。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
-// 7. AI专用HTTP/SOCKS入口：127.0.0.1:17903，直接锁定下方ANTHROPIC_FIXED_NODE。
+// 7. AI专用HTTP/SOCKS入口：127.0.0.1:17903，仅本机可连，不向局域网开放；直接锁定下方ANTHROPIC_FIXED_NODE。
 //    Hermes/pi等需显式连接此入口；不跟随普通策略组、规则或全局/DIRECT模式。
 //    固定节点缺失时入口使用REJECT，不换IP、不回退直连。节点名改变需人工核实后修改常量。
 //    这里只建立入口，不会自动修改应用的代理环境，也不等于浏览器WebRTC/DNS防护。

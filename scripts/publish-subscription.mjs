@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
 
 const repository = process.env.GITHUB_REPOSITORY;
 const token = process.env.GITHUB_TOKEN;
@@ -17,7 +18,8 @@ async function api(route, method = 'GET', body, optional = false) {
       ...(body ? { 'Content-Type': 'application/json' } : {})
     },
     body: body ? JSON.stringify(body) : undefined,
-    signal: AbortSignal.timeout(30000)
+    signal: AbortSignal.timeout(30000),
+    cache: 'no-store'
   });
   if (optional && response.status === 404) return null;
   if (!response.ok) throw new Error(`GitHub publish API failed: HTTP ${response.status}`);
@@ -32,7 +34,7 @@ async function main() {
   }
   const ref = await api('/git/ref/heads/subscription', 'GET', undefined, true);
   if (ref) {
-    const previous = await api('/contents/version.json?ref=subscription', 'GET', undefined, true);
+    const previous = await api(`/contents/version.json?ref=${ref.object.sha}`, 'GET', undefined, true);
     if (previous) {
       const old = JSON.parse(Buffer.from(previous.content, 'base64').toString());
       if (old.configSha256 === metadata.configSha256 && old.sourceSha256 === metadata.sourceSha256) {
@@ -62,8 +64,24 @@ async function main() {
   } else {
     await api('/git/refs', 'POST', { ref: 'refs/heads/subscription', sha: commit.sha });
   }
-  const exact = await api('/git/ref/heads/subscription');
-  if (exact.object.sha !== commit.sha) throw new Error('Published branch verification failed');
+  // A branch-name GET may briefly return its previous value after a successful PATCH.
+  // Retry a cache-busted read, then verify both files at the immutable commit.
+  let verified = false;
+  for (const [attempt, milliseconds] of [0, 1000, 2000, 4000, 8000].entries()) {
+    if (milliseconds) await delay(milliseconds);
+    const exact = await api(`/git/ref/heads/subscription?verify=${commit.sha}&attempt=${attempt}`);
+    if (exact.object.sha === commit.sha) {
+      verified = true;
+      break;
+    }
+  }
+  if (!verified) throw new Error('Published branch verification failed after retries');
+  for (const [name, expected] of files) {
+    const actual = await api(`/contents/${name}?ref=${commit.sha}`);
+    if (!Buffer.from(actual.content, 'base64').equals(expected)) {
+      throw new Error('Published file verification failed');
+    }
+  }
   console.log(`Encrypted subscription published and verified: ${commit.sha}`);
 }
 

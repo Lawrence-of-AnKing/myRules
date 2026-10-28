@@ -332,6 +332,18 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,hath.network,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,ehtracker.org,🇭🇰 香港固定",
   "IP-CIDR,178.175.128.0/21,🇭🇰 香港固定,no-resolve",
+  // JHenTai 等客户端打开「域名前置」时会绕过 DNS，直接连下面这些 E-Hentai 备用 IP，
+  // 此时域名规则不生效，只能按 IP 兜底到同一出口。IP 取自 JHenTai 内置 host2IPs 列表，
+  // 对应 e-hentai.org / forums.e-hentai.org（Cloudflare）、api.e-hentai.org、upld.e-hentai.org。
+  "IP-CIDR,172.66.132.196/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,172.66.140.62/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,37.48.92.161/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,37.48.81.204/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,212.7.202.51/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,212.7.200.104/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,5.79.104.110/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,95.211.208.236/32,🇭🇰 香港固定,no-resolve",
+  "IP-CIDR,89.149.221.236/32,🇭🇰 香港固定,no-resolve",
   "DOMAIN-SUFFIX,hanime1.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hanimeone.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hembed.com,🇭🇰 香港固定",

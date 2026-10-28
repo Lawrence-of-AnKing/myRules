@@ -323,6 +323,10 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,nyaa.si,🌎 个人规则",
   "DOMAIN-SUFFIX,seedhub.cc,🌎 个人规则",
   "DOMAIN-SUFFIX,chaospace.xyz,🌎 个人规则",
+  // JHenTai 配套服务：EhArBot 存档机器人、Archive at Home 离线下载接口。
+  // 两者都不是 E-Hentai 官方站，出口不敏感，跟随「🌎 个人规则」；不指向香港固定以免挤占 E 站线路。
+  "DOMAIN,ehbot-api.ntr.you,🌎 个人规则",
+  "DOMAIN-SUFFIX,archive-at-home.org,🌎 个人规则",
   // 既有固定香港网站
   "DOMAIN-SUFFIX,e-hentai.org,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,exhentai.org,🇭🇰 香港固定",

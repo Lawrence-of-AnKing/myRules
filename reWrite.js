@@ -299,6 +299,9 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,pikpak.me,☁️ 云盘服务",
   "DOMAIN-SUFFIX,pikpakcdn.com,☁️ 云盘服务",
   // 个人代理网站
+  // 海外服务的中文域名不能按 .cn 直连；官网、面板及 API 使用同一普通代理组。
+  "DOMAIN-SUFFIX,iproyal.cn,🌎 个人规则",
+  "DOMAIN-SUFFIX,iproyal.com,🌎 个人规则",
   "DOMAIN-SUFFIX,setapp.com,🌎 个人规则",
   "DOMAIN-SUFFIX,brew.sh,🌎 个人规则",
   "DOMAIN-SUFFIX,cip.cc,🌎 个人规则",
@@ -641,6 +644,11 @@ const DNS_SETTINGS = {
     ]
   },
   "nameserver-policy": {
+    // 明确覆盖 geosite:cn 的国内解析，避免 .cn 代理例外仍拿到异常 DNS 答案。
+    "+.iproyal.cn": [
+      "https://1.1.1.1/dns-query#🌎 个人规则",
+      "https://dns.google/dns-query#🌎 个人规则"
+    ],
     "+.anhuitelecom.com": [
       "https://dns.alidns.com/dns-query",
       "223.5.5.5"

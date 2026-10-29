@@ -106,7 +106,7 @@ const OPENAI_RULES = [
 ];
 const US_RULES = [
   "DOMAIN-SUFFIX,auth0.com,💲 美国规则",
-  "DOMAIN,challenges.cloudflare.com,💲 美国规则",
+  "DOMAIN,challenges.cloudflare.com,🔒 ChatGPT / Claude",
   "DOMAIN-SUFFIX,workos.com,💲 美国规则",
   "DOMAIN-SUFFIX,workoscdn.com,💲 美国规则",
   "DOMAIN-SUFFIX,intercom.io,💲 美国规则",

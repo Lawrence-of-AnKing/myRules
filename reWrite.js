@@ -1,21 +1,21 @@
 // FlClash 共用覆写：按用途选出口；不去广告；国内/明确例外直连，其余默认代理。
 // 用法：把本文件内容作为订阅的“脚本覆写”。普通文件不是机场订阅，也不能作为YAML导入。
-// 文件不含机场节点和授权密码；节点仍由你自己的机场订阅提供。
+// 公开脚本不含节点密码；机场订阅和 IPRoyal 凭据仅在构建时从 GitHub Secrets 注入。
 //
 // 日常使用：
 // 1. “🌎 个人规则”管理自己收录的网站；默认跟随“🚀 手动切换”，限流时在后者换节点。
 // 2. “🌐 默认代理”管理其余海外流量和国际版OneDrive/SharePoint；不提供DIRECT兜底。
 // 3. 不再生成美国/香港/日本等地区节点组；国家只用于后台筛选固定用途的候选节点。
 // 4. AI固定组保留原名称和候选节点名，便于沿用各设备已保存的选择，不替你换出口：
-//    “🟣 Anthropic”=Claude；“💲 美国规则”=OpenAI/Gemini等既有美国业务及共享登录；
+//    “🔒 ChatGPT / Claude”=固定香港 S01 → IPRoyal；“💲 美国规则”=Gemini等既有美国业务及共享服务；
 //    “🇭🇰 香港规则”=Cline；“🇸🇬 WorkBuddy”=WorkBuddy；“🇭🇰 香港固定”=GitHub等既有固定线路。
 //    固定组只列对应地区的实际节点（保留原有明确选用Anthropic的选项），不挂手动/自动组。
 //    尚未保存选择，或已选节点从订阅消失时，默认REJECT；请确认原来使用的节点后再选。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
-// 7. AI专用HTTP/SOCKS入口：127.0.0.1:17903，仅本机可连，不向局域网开放；直接锁定下方ANTHROPIC_FIXED_NODE。
-//    Hermes/pi等需显式连接此入口；不跟随普通策略组、规则或全局/DIRECT模式。
-//    固定节点缺失时入口使用REJECT，不换IP、不回退直连。节点名改变需人工核实后修改常量。
+// 7. AI专用HTTP/SOCKS入口：127.0.0.1:17903，仅本机可连，不向局域网开放。
+//    17903 强制固定 IPRoyal，供 ChatGPT/Claude 客户端使用；17904 强制固定美国，供需要显式代理的 Gemini 客户端使用。
+//    普通分流仍按平台区分；两个专用入口不受全局/直连模式影响，失败不换 IP、不回退直连。
 //    这里只建立入口，不会自动修改应用的代理环境，也不等于浏览器WebRTC/DNS防护。
 //
 // 个人直连/全球直连不再占选择组，已确认的直连规则直接指向DIRECT；基础MRS仍自动更新。
@@ -24,8 +24,11 @@
 
 // 一、Tailscale和内网。Tailnet必须先于一般private规则。
 const TS_PROXY_NAME = "tailnet";
-// 与现有Mac/Windows的Claude出口一致；禁止按排序挑选其他美国节点。
-const ANTHROPIC_FIXED_NODE = "🇺🇲 美国S01 | IEPL | x1.5";
+// 前置与最终出口均显式固定；不按地区排序或测速自动换节点。
+const IPROYAL_FRONT_NODE = "🇭🇰 香港S01";
+const IPROYAL_PROXY_NAME = "IPRoyal 新加坡固定";
+const AI_FIXED_GROUP = "🔒 ChatGPT / Claude";
+const US_FIXED_NODE = "🇺🇲 美国S01 | IEPL | x1.5";
 const TS_AUTH_KEY = ""; // 不在同步脚本里放密钥。
 // 新设备：日志级别info → 对tailnet点测速 → 日志搜索To start → 打开授权链接批准。
 const TAILSCALE_RULES = [
@@ -50,25 +53,56 @@ const TUN_TAILSCALE_SETTINGS = {"route-exclude-address":["192.168.0.0/16"],"excl
 
 // 二、AI指定出口。后缀会覆盖子域名，不重复抄每个API和下载子域。
 const ANTHROPIC_RULES = [
-  "DOMAIN-SUFFIX,anthropic.com,🟣 Anthropic",
-  "DOMAIN-SUFFIX,claude.ai,🟣 Anthropic",
-  "DOMAIN-SUFFIX,claude.com,🟣 Anthropic",
-  "DOMAIN-SUFFIX,clau.de,🟣 Anthropic",
-  "DOMAIN-SUFFIX,claude.app,🟣 Anthropic",
-  "DOMAIN-SUFFIX,claudeusercontent.com,🟣 Anthropic",
-  "DOMAIN-SUFFIX,claudemcpclient.com,🟣 Anthropic",
-  "DOMAIN-SUFFIX,claudemcpcontent.com,🟣 Anthropic",
-  "DOMAIN,servd-anthropic-website.b-cdn.net,🟣 Anthropic",
-  "DOMAIN,anthropic.com.cdn.cloudflare.net,🟣 Anthropic",
-  "DOMAIN,cdn.usefathom.com,🟣 Anthropic",
-  "DOMAIN,anthropic-com.ghost.io,🟣 Anthropic",
-  "DOMAIN-SUFFIX,statsigapi.net,🟣 Anthropic",
-  "DOMAIN,browser-intake-us5-datadoghq.com,🟣 Anthropic",
-  "DOMAIN,http-intake.logs.us5.datadoghq.com,🟣 Anthropic",
-  "IP-CIDR,160.79.104.0/21,🟣 Anthropic,no-resolve",
-  "IP-CIDR6,2607:6bc0::/32,🟣 Anthropic,no-resolve",
-  "DOMAIN-KEYWORD,anthropic,🟣 Anthropic",
-  "DOMAIN-KEYWORD,claude,🟣 Anthropic"
+  "DOMAIN-SUFFIX,anthropic.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,claude.ai,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,claude.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,clau.de,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,claude.app,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,claudeusercontent.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,claudemcpclient.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,claudemcpcontent.com,🔒 ChatGPT / Claude",
+  "DOMAIN,servd-anthropic-website.b-cdn.net,🔒 ChatGPT / Claude",
+  "DOMAIN,anthropic.com.cdn.cloudflare.net,🔒 ChatGPT / Claude",
+  "DOMAIN,cdn.usefathom.com,🔒 ChatGPT / Claude",
+  "DOMAIN,anthropic-com.ghost.io,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,statsigapi.net,🔒 ChatGPT / Claude",
+  "DOMAIN,browser-intake-us5-datadoghq.com,🔒 ChatGPT / Claude",
+  "DOMAIN,http-intake.logs.us5.datadoghq.com,🔒 ChatGPT / Claude",
+  "IP-CIDR,160.79.104.0/21,🔒 ChatGPT / Claude,no-resolve",
+  "IP-CIDR6,2607:6bc0::/32,🔒 ChatGPT / Claude,no-resolve",
+  "DOMAIN-KEYWORD,anthropic,🔒 ChatGPT / Claude",
+  "DOMAIN-KEYWORD,claude,🔒 ChatGPT / Claude"
+];
+const OPENAI_RULES = [
+  "DOMAIN-SUFFIX,chatgpt.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,chatgpt.site,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openai.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openai.org,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,chat.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,sora.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,oaistatic.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,oaiusercontent.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,oaistatsig.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openaimerge.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,crixet.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,featuregates.org,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,statsig.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openaiassets.blob.core.windows.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openaicom.imgix.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openaiapi-site.azureedge.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,production-openaicom-storage.azureedge.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,webpubsub.azure.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,client-api.arkoselabs.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,openai-api.arkoselabs.com,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,chatgpt.livekit.cloud,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,host.livekit.cloud,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,turn.livekit.cloud,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,browser-intake-datadoghq.com,🔒 ChatGPT / Claude",
+  "DOMAIN-KEYWORD,openai,🔒 ChatGPT / Claude",
+  "DOMAIN-KEYWORD,chatgpt,🔒 ChatGPT / Claude",
 ];
 const US_RULES = [
   "DOMAIN-SUFFIX,auth0.com,💲 美国规则",
@@ -80,35 +114,6 @@ const US_RULES = [
   "DOMAIN-SUFFIX,sentry.io,💲 美国规则",
   "DOMAIN,rum.browser-intake-datadoghq.com,💲 美国规则",
   "DOMAIN-SUFFIX,ct.sendgrid.net,💲 美国规则",
-  "DOMAIN-SUFFIX,chatgpt.com,💲 美国规则",
-  "DOMAIN-SUFFIX,chatgpt.site,💲 美国规则",
-  "DOMAIN-SUFFIX,openai.com,💲 美国规则",
-  "DOMAIN-SUFFIX,openai.org,💲 美国规则",
-  "DOMAIN-SUFFIX,chat.com,💲 美国规则",
-  "DOMAIN-SUFFIX,sora.com,💲 美国规则",
-  "DOMAIN-SUFFIX,oaistatic.com,💲 美国规则",
-  "DOMAIN-SUFFIX,oaiusercontent.com,💲 美国规则",
-  "DOMAIN-SUFFIX,oaistatsig.com,💲 美国规则",
-  "DOMAIN-SUFFIX,openaimerge.com,💲 美国规则",
-  "DOMAIN-SUFFIX,crixet.com,💲 美国规则",
-  "DOMAIN-SUFFIX,featuregates.org,💲 美国规则",
-  "DOMAIN-SUFFIX,statsig.com,💲 美国规则",
-  "DOMAIN-SUFFIX,openaiassets.blob.core.windows.net,💲 美国规则",
-  "DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net,💲 美国规则",
-  "DOMAIN-SUFFIX,openaicom.imgix.net,💲 美国规则",
-  "DOMAIN-SUFFIX,openaiapi-site.azureedge.net,💲 美国规则",
-  "DOMAIN-SUFFIX,production-openaicom-storage.azureedge.net,💲 美国规则",
-  "DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,💲 美国规则",
-  "DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,💲 美国规则",
-  "DOMAIN-SUFFIX,webpubsub.azure.com,💲 美国规则",
-  "DOMAIN-SUFFIX,client-api.arkoselabs.com,💲 美国规则",
-  "DOMAIN-SUFFIX,openai-api.arkoselabs.com,💲 美国规则",
-  "DOMAIN-SUFFIX,chatgpt.livekit.cloud,💲 美国规则",
-  "DOMAIN-SUFFIX,host.livekit.cloud,💲 美国规则",
-  "DOMAIN-SUFFIX,turn.livekit.cloud,💲 美国规则",
-  "DOMAIN-SUFFIX,browser-intake-datadoghq.com,💲 美国规则",
-  "DOMAIN-KEYWORD,openai,💲 美国规则",
-  "DOMAIN-KEYWORD,chatgpt,💲 美国规则",
   "DOMAIN-SUFFIX,reddit.com,💲 美国规则",
   "DOMAIN-SUFFIX,redd.it,💲 美国规则",
   "DOMAIN-SUFFIX,redditstatic.com,💲 美国规则",
@@ -151,7 +156,7 @@ const US_RULES = [
   "DOMAIN,accounts.google.com,💲 美国规则",
   "DOMAIN,accounts.googleusercontent.com,💲 美国规则"
 ];
-const AI_RULES = [...ANTHROPIC_RULES, ...US_RULES];
+const AI_RULES = [...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
 
 // 三、系统服务与OneDrive。用途例外先于宽泛的微软/Apple/CDN规则。
 const APPLE_DIRECT_RULES = [
@@ -725,10 +730,26 @@ function main(config) {
   config.dns = clone(DNS_SETTINGS);
   config.dns["nameserver-policy"]["+.ts.net"] = ["100.100.100.100"];
 
-  const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME);
+  const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME && p.name !== IPROYAL_PROXY_NAME);
   const nodes = sourceProxies.filter(p => !["direct","reject","reject-drop","compatible"].includes(String(p.type || "").toLowerCase()))
     .filter(p => !/剩余|到期|有效期|官网|重置|套餐|流量[:：]/.test(p.name));
   const names = unique(nodes.map(p => p.name));
+  // 私有构建注入；直接在客户端运行公开脚本时无凭据，AI 只会 REJECT。
+  const supplied = typeof IPROYAL_PROXY_INJECT === "undefined" ? null : IPROYAL_PROXY_INJECT;
+  let iproyal = null;
+  if (supplied) {
+    if (!names.includes(IPROYAL_FRONT_NODE)) throw new Error("Fixed IPRoyal front node is missing");
+    if (typeof supplied.server !== "string" || !supplied.server ||
+        !Number.isInteger(supplied.port) || supplied.port < 1 || supplied.port > 65535 ||
+        typeof supplied.username !== "string" || !supplied.username ||
+        typeof supplied.password !== "string" || !supplied.password) {
+      throw new Error("Invalid private IPRoyal proxy configuration");
+    }
+    iproyal = {name:IPROYAL_PROXY_NAME, type:"socks5", server:supplied.server,
+      port:supplied.port, username:supplied.username, password:supplied.password,
+      udp:false, "dialer-proxy":IPROYAL_FRONT_NODE};
+  }
+
   const us = fixedCandidates(names, US_PATTERN);
   const hk = ieplFirst(fixedCandidates(names, HK_PATTERN));
   const hkCline = [...hk].sort((a,b) => (/香港S09\s*\|\s*IEPL/i.test(b)?1:0) - (/香港S09\s*\|\s*IEPL/i.test(a)?1:0));
@@ -744,8 +765,9 @@ function main(config) {
     selected("🚀 手动切换",names),
     selected("🌐 默认代理",["♻️ 自动选择","🚀 手动切换",...names]),
     auto("♻️ 自动选择",names),
-    selected("🟣 Anthropic",["REJECT",...us]),
-    selected("💲 美国规则",us.length?["REJECT",...us,"🟣 Anthropic"]:[]),
+    // 用户已确认启用此唯一出口；首项不是自动挑选，失败也不切到其他节点。
+    selected(AI_FIXED_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
+    selected("💲 美国规则",["REJECT",...us]),
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),
     selected("🇸🇬 WorkBuddy",["REJECT",...sg]),
@@ -757,16 +779,18 @@ function main(config) {
   config["proxy-groups"] = groups;
   const ts = {name:TS_PROXY_NAME, type:"tailscale", udp:true};
   if (TS_AUTH_KEY) ts["auth-key"] = TS_AUTH_KEY;
-  config.proxies = sourceProxies.concat([ts]);
+  config.proxies = sourceProxies.concat(iproyal?[iproyal,ts]:[ts]);
   config["rule-providers"] = clone(RULE_PROVIDERS);
 
   // 节点不足时第二端口拒绝连接，不假装两个账号有独立出口。
   config.listeners = [
     {name:"wb-slot-1", type:"mixed", port:17901, listen:"127.0.0.1", proxy:sg[0] || "REJECT"},
     {name:"wb-slot-2", type:"mixed", port:17902, listen:"127.0.0.1", proxy:sg[1] || "REJECT"},
-    // 直接指定出站，避免普通规则/全局模式或策略组选DIRECT影响模型请求。
-    {name:"ai-locked-us-s01", type:"mixed", port:17903, listen:"127.0.0.1", udp:false,
-      proxy:names.includes(ANTHROPIC_FIXED_NODE) ? ANTHROPIC_FIXED_NODE : "REJECT"}
+    // proxy 强制出站，不用仍受 mode 影响的 sub-rules 替代原有保护。
+    {name:"ai-locked-iproyal", type:"mixed", port:17903, listen:"127.0.0.1", udp:false,
+      proxy:AI_FIXED_GROUP},
+    {name:"ai-locked-us-s01", type:"mixed", port:17904, listen:"127.0.0.1", udp:false,
+      proxy:names.includes(US_FIXED_NODE) ? US_FIXED_NODE : "REJECT"}
   ];
   config.rules = [...TAILSCALE_RULES, ...LOCAL_RULES, ...AI_RULES, ...PUSH_RULES, ...ONEDRIVE_RULES, ...APPLE_DIRECT_RULES, ...MICROSOFT_DIRECT_RULES, ...UPDATE_DIRECT_RULES, ...MY_CUSTOM_RULES, ...BASE_RULES];
   if (config.tun) config.tun = Object.assign({},config.tun,TUN_TAILSCALE_SETTINGS);

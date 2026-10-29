@@ -31,7 +31,13 @@ async function main() {
     throw new Error('Upstream must be a complete Clash/Mihomo YAML subscription with proxies');
   }
   const script = await fs.readFile(path.join(root, 'reWrite.js'), 'utf8');
-  const context = vm.createContext({ config: structuredClone(source) });
+  // Credentials are injected in memory, never checked into this public repository.
+  const privateJson = process.env.IPROYAL_PROXY_JSON;
+  if (!privateJson) throw new Error('Private IPRoyal proxy secret is required');
+  let privateProxy;
+  try { privateProxy = JSON.parse(privateJson); }
+  catch { throw new Error('Private IPRoyal proxy secret is not valid JSON'); }
+  const context = vm.createContext({ config: structuredClone(source), IPROYAL_PROXY_INJECT: privateProxy });
   // This executes the repository owner's trusted script, not untrusted third-party JS.
   // node:vm is a compatibility boundary, not a security sandbox.
   vm.runInContext(script, context, { timeout: 5000, filename: 'reWrite.js' });
@@ -58,11 +64,33 @@ async function main() {
       throw new Error('A routing rule references a missing rule provider');
     }
   }
-  const sensitive = ['🟣 Anthropic', '💲 美国规则', '🇭🇰 香港固定', '🇭🇰 香港规则', '🇸🇬 WorkBuddy'];
+  const sensitive = ['💲 美国规则', '🇭🇰 香港固定', '🇭🇰 香港规则', '🇸🇬 WorkBuddy'];
   for (const name of sensitive) {
     const group = result['proxy-groups'].find(item => item.name === name);
     if (group?.type !== 'select' || group.proxies?.[0] !== 'REJECT') {
       throw new Error('Sensitive groups must default to REJECT; saved choices stay on each device');
+    }
+  }
+  const fixedAI = result['proxy-groups'].find(item => item.name === '🔒 ChatGPT / Claude');
+  const fixedNode = result.proxies.find(item => item.name === 'IPRoyal 新加坡固定');
+  if (fixedAI?.type !== 'select' || JSON.stringify(fixedAI.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT']) ||
+      fixedNode?.type !== 'socks5' || fixedNode['dialer-proxy'] !== '🇭🇰 香港S01') {
+    throw new Error('AI egress must contain only the explicitly approved private proxy and REJECT');
+  }
+  for (const node of result.proxies) {
+    if (node['dialer-proxy'] && !targets.has(node['dialer-proxy'])) {
+      throw new Error('A chained proxy references a missing front node');
+    }
+  }
+  for (const listener of result.listeners || []) {
+    if (listener.proxy && !targets.has(listener.proxy)) throw new Error('Listener references a missing proxy');
+    if (listener.rule && !result['sub-rules']?.[listener.rule]) throw new Error('Listener references missing sub-rules');
+  }
+  for (const rules of Object.values(result['sub-rules'] || {})) {
+    for (const rule of rules) {
+      const fields = rule.split(',');
+      const target = fields.at(-1) === 'no-resolve' ? fields.at(-2) : fields.at(-1);
+      if (!targets.has(target)) throw new Error('A sub-rule references a missing target');
     }
   }
   // Complete config distribution must not publish an unauthenticated management listener.

@@ -26,6 +26,8 @@ https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/refs/heads/subscrip
 ## 凭据边界
 
 - `AIRPORT_SUBSCRIPTION_URL` 只存放在 GitHub Actions Secret。
+- `IPROYAL_PROXY_JSON` 是构建必需的 Secret，包含 `server`、`port`、`username`、`password`；IPRoyal ISP 的 SOCKS5 默认端口为 12324，不能照搬 HTTP 的 12323。凭据只进入 age 加密配置。
+- ChatGPT/Claude 使用唯一的 IPRoyal 新加坡出口，前置固定香港 S01；Gemini 等原美国业务继续使用美国组。17903 本机入口强制 IPRoyal，17904 强制原美国 S01；专用入口在全局/直连模式下也不回退普通默认代理。Gemini 客户端如需显式代理，应使用 17904 而非 17903。
 - `distribution/recipient.txt` 是可公开的 age 公钥。
 - 解密私钥保留在自己的设备上，不上传到工作流。
 - 发布只使用 Actions 自动发放的短期 `GITHUB_TOKEN`，不使用个人高权限 token。
@@ -40,7 +42,7 @@ https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/refs/heads/subscrip
 2. 导入固定链接并填写 age 私钥。
 3. 关闭原有针对同一配置的 JS 覆写，避免重复执行。
 4. 各端单独设置订阅自动更新；手机省电、设备休眠和网络故障可能推迟更新。
-5. 固定 AI 策略首次默认 REJECT；确认并选择原用节点。已有设备应保留本机选择，不能以“首次默认”代替迁移验证。
+5. ChatGPT/Claude 固定组默认使用用户已确认的唯一 IPRoyal 出口，另提供 REJECT；其余固定用途组仍默认 REJECT。已有美国组选择保持不变，迁移后应验证 OpenAI/Anthropic 为新加坡、Gemini 为美国。
 
 更新后的配置会保留 `store-selected: true`，但最终选择是否保留仍取决于客户端，应先新建测试订阅，保留旧订阅作为恢复入口。
 
@@ -50,7 +52,7 @@ Tailscale 私钥和登录状态不会复制。生成配置不改变终端 TUN �
 
 ```sh
 npm ci --ignore-scripts
-SUBSCRIPTION_INPUT=/安全路径/机场.yaml npm run build:subscription
+SUBSCRIPTION_INPUT=/安全路径/机场.yaml IPROYAL_PROXY_JSON="$(读取私有配置的命令)" npm run build:subscription
 ```
 
 生成的明文只写入忽略目录 `.build/`，不要提交或分享。`reWrite.js` 按受信任代码执行。流程默认不打开 Mihomo HTTP 控制器，各客户端可使用自己的管理设置。

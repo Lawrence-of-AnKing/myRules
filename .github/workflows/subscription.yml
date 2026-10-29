@@ -43,6 +43,7 @@ jobs:
       - name: 生成完整配置
         env:
           AIRPORT_SUBSCRIPTION_URL: ${{ secrets.AIRPORT_SUBSCRIPTION_URL }}
+          IPROYAL_PROXY_JSON: ${{ secrets.IPROYAL_PROXY_JSON }}
         run: npm run build:subscription
       - name: 准备并验证 Mihomo
         shell: bash

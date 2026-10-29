@@ -274,6 +274,7 @@ const MY_CUSTOM_RULES = [
   "DOMAIN,crl.pki.goog,DIRECT",
   // Google Play 仅大陆 CDN 直连；其余服务器仍按后续规则分流，避免整域直连误伤海外下载。
   // 与 v2fly/google-play 的 @cn 条目一致：北京 2x3、上海 ni5、广州 j5o。
+  "DOMAIN,redirector.c.play.google.com,DIRECT",
   "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.xn--ngstr-lra8j\\.com$,DIRECT",
   "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.googlevideo\\.com$,DIRECT",
   // 个人代理例外和Steam下载例外
@@ -644,8 +645,8 @@ const DNS_SETTINGS = {
       "https://dns.alidns.com/dns-query",
       "223.5.5.5"
     ],
-    // 与上面的四条精确直连例外配套，避免被 google.com 的海外 fallback 解析接走。
-    "dl.google.com,tools.google.com,ocsp.pki.goog,crl.pki.goog": [
+    // 与上面的精确直连例外配套，避免被 google.com 的海外 fallback 解析接走。
+    "dl.google.com,tools.google.com,ocsp.pki.goog,crl.pki.goog,redirector.c.play.google.com": [
       "https://dns.alidns.com/dns-query",
       "223.5.5.5"
     ],

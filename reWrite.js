@@ -17,6 +17,7 @@
 //    17903 强制固定 IPRoyal，供 ChatGPT/Claude 客户端使用；17904 强制固定美国，供需要显式代理的 Gemini 客户端使用。
 //    普通分流仍按平台区分；两个专用入口不受全局/直连模式影响，失败不换 IP、不回退直连。
 //    这里只建立入口，不会自动修改应用的代理环境，也不等于浏览器WebRTC/DNS防护。
+//    入口名称固定对应端口，不随出站节点改名或迁移；从旧命名首次升级须完整退出并重启 FlClash。
 //
 // 个人直连/全球直连不再占选择组，已确认的直连规则直接指向DIRECT；基础MRS仍自动更新。
 // 保留现有DNS、TUN、听书、坚果云和下载例外，不修改设备已有端口、IPv6或TUN开关；另增AI专用入口。
@@ -787,9 +788,10 @@ function main(config) {
     {name:"wb-slot-1", type:"mixed", port:17901, listen:"127.0.0.1", proxy:sg[0] || "REJECT"},
     {name:"wb-slot-2", type:"mixed", port:17902, listen:"127.0.0.1", proxy:sg[1] || "REJECT"},
     // proxy 强制出站，不用仍受 mode 影响的 sub-rules 替代原有保护。
-    {name:"ai-locked-iproyal", type:"mixed", port:17903, listen:"127.0.0.1", udp:false,
+    // 内核按名称热更新；同名不迁移端口，避免新入口先绑定仍被旧入口占用的端口。
+    {name:"ai-entry-17903", type:"mixed", port:17903, listen:"127.0.0.1", udp:false,
       proxy:AI_FIXED_GROUP},
-    {name:"ai-locked-us-s01", type:"mixed", port:17904, listen:"127.0.0.1", udp:false,
+    {name:"ai-entry-17904", type:"mixed", port:17904, listen:"127.0.0.1", udp:false,
       proxy:names.includes(US_FIXED_NODE) ? US_FIXED_NODE : "REJECT"}
   ];
   config.rules = [...TAILSCALE_RULES, ...LOCAL_RULES, ...AI_RULES, ...PUSH_RULES, ...ONEDRIVE_RULES, ...APPLE_DIRECT_RULES, ...MICROSOFT_DIRECT_RULES, ...UPDATE_DIRECT_RULES, ...MY_CUSTOM_RULES, ...BASE_RULES];

@@ -27,7 +27,8 @@ https://raw.githubusercontent.com/Lawrence-of-AnKing/myRules/refs/heads/subscrip
 
 - `AIRPORT_SUBSCRIPTION_URL` 只存放在 GitHub Actions Secret。
 - `IPROYAL_PROXY_JSON` 是构建必需的 Secret，包含 `server`、`port`、`username`、`password`；IPRoyal ISP 的 SOCKS5 默认端口为 12324，不能照搬 HTTP 的 12323。凭据只进入 age 加密配置。
-- ChatGPT/Claude 使用唯一的 IPRoyal 新加坡出口，前置固定香港 S01；Gemini 等原美国业务继续使用美国组。17903 本机入口强制 IPRoyal，17904 强制原美国 S01；专用入口在全局/直连模式下也不回退普通默认代理。Gemini 客户端如需显式代理，应使用 17904 而非 17903。
+- ChatGPT/Claude 使用唯一的 IPRoyal 新加坡出口，前置固定香港 S01；Gemini 等原美国业务继续使用美国组。17907 本机入口强制 IPRoyal，17904 强制原美国 S01；专用入口在全局/直连模式下也不回退普通默认代理。Gemini 客户端如需显式代理，应使用 17904 而非 17907。
+- 17907 与旧订阅的 17903 分开，避免不同名称共用端口造成热加载冲突。Hermes/pi 等客户端须同步固定为 17907；切到不提供该端口的订阅时应报错断网，不能自动改用旧 17903 或普通代理端口。
 - `distribution/recipient.txt` 是可公开的 age 公钥。
 - 解密私钥保留在自己的设备上，不上传到工作流。
 - 发布只使用 Actions 自动发放的短期 `GITHUB_TOKEN`，不使用个人高权限 token。

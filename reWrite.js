@@ -234,6 +234,8 @@ const MICROSOFT_DIRECT_RULES = [
 
 // 四、个人业务例外。保留既有意图，只合并明确重复。
 const MY_CUSTOM_RULES = [
+  // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。
+  "DOMAIN-SUFFIX,anhuitelecom.com,DIRECT",
   // 微信、QQ和腾讯服务直连
   "DOMAIN-SUFFIX,weixin.com,DIRECT",
   "DOMAIN-SUFFIX,wechat.com,DIRECT",
@@ -638,6 +640,10 @@ const DNS_SETTINGS = {
     ]
   },
   "nameserver-policy": {
+    "+.anhuitelecom.com": [
+      "https://dns.alidns.com/dns-query",
+      "223.5.5.5"
+    ],
     // 与上面的四条精确直连例外配套，避免被 google.com 的海外 fallback 解析接走。
     "dl.google.com,tools.google.com,ocsp.pki.goog,crl.pki.goog": [
       "https://dns.alidns.com/dns-query",

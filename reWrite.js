@@ -30,6 +30,7 @@ const TS_PROXY_NAME = "tailnet";
 const IPROYAL_FRONT_NODE = "🇭🇰 香港S01";
 const IPROYAL_PROXY_NAME = "IPRoyal 新加坡固定";
 const AI_FIXED_GROUP = "🔒 ChatGPT / Claude";
+const GOOGLE_SG_GROUP = "🇸🇬 谷歌固定";
 const US_FIXED_NODE = "🇺🇲 美国S01 | IEPL | x1.5";
 const TS_AUTH_KEY = ""; // 不在同步脚本里放密钥。
 // 新设备：日志级别info → 对tailnet点测速 → 日志搜索To start → 打开授权链接批准。
@@ -122,20 +123,6 @@ const US_RULES = [
   "DOMAIN-SUFFIX,redditmedia.com,💲 美国规则",
   "DOMAIN-SUFFIX,redditspace.com,💲 美国规则",
   "DOMAIN,reddit.map.fastly.net,💲 美国规则",
-  "DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com,💲 美国规则",
-  "DOMAIN,daily-cloudcode-pa.googleapis.com,💲 美国规则",
-  "DOMAIN,cloudcode-pa.googleapis.com,💲 美国规则",
-  "DOMAIN,cloudcode-pa.sandbox.googleapis.com,💲 美国规则",
-  "DOMAIN,oauth2.googleapis.com,💲 美国规则",
-  "DOMAIN,proactivebackend-pa.googleapis.com,💲 美国规则",
-  "DOMAIN-SUFFIX,antigravity.google,💲 美国规则",
-  "DOMAIN-SUFFIX,aistudio.google.com,💲 美国规则",
-  "DOMAIN,alkalimakersuite-pa.clients6.google.com,💲 美国规则",
-  "DOMAIN-SUFFIX,makersuite.google.com,💲 美国规则",
-  "DOMAIN-SUFFIX,generativelanguage.googleapis.com,💲 美国规则",
-  "DOMAIN-SUFFIX,generativeai.google,💲 美国规则",
-  "DOMAIN-SUFFIX,ai.google.dev,💲 美国规则",
-  "DOMAIN-SUFFIX,gemini.google.com,💲 美国规则",
   "DOMAIN-SUFFIX,x.com,💲 美国规则",
   "DOMAIN-SUFFIX,twitter.com,💲 美国规则",
   "DOMAIN-SUFFIX,t.co,💲 美国规则",
@@ -154,9 +141,7 @@ const US_RULES = [
   "DOMAIN-SUFFIX,grok.com,💲 美国规则",
   "DOMAIN-SUFFIX,ippure.com,💲 美国规则",
   "DOMAIN,js.stripe.com,💲 美国规则",
-  "DOMAIN,workos.imgix.net,💲 美国规则",
-  "DOMAIN,accounts.google.com,💲 美国规则",
-  "DOMAIN,accounts.googleusercontent.com,💲 美国规则"
+  "DOMAIN,workos.imgix.net,💲 美国规则"
 ];
 const AI_RULES = [...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
 
@@ -240,6 +225,44 @@ const MICROSOFT_DIRECT_RULES = [
 ];
 
 // 四、个人业务例外。保留既有意图，只合并明确重复。
+// Google 需要代理的域名统一指向新加坡固定出口。
+// 直连例外（dl.google.com、tools.google.com、Play 大陆 CDN）写在 MY_CUSTOM_RULES 更前面，仍然优先。
+const GOOGLE_RULES = [
+  // AI 与账号
+  "DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN,daily-cloudcode-pa.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN,cloudcode-pa.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN,cloudcode-pa.sandbox.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN,oauth2.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN,proactivebackend-pa.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN,alkalimakersuite-pa.clients6.google.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,antigravity.google,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,aistudio.google.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,makersuite.google.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,generativelanguage.googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,generativeai.google,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,ai.google.dev,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,gemini.google.com,🇸🇬 谷歌固定",
+  "DOMAIN,accounts.google.com,🇸🇬 谷歌固定",
+  "DOMAIN,accounts.googleusercontent.com,🇸🇬 谷歌固定",
+  // 通用服务
+  "DOMAIN-SUFFIX,google.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,google.com.hk,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,google.co.jp,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,gstatic.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,googleusercontent.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,deepmind.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,deepmind.google,🇸🇬 谷歌固定",
+  // YouTube
+  "DOMAIN-SUFFIX,youtube.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,youtu.be,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,ytimg.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,ggpht.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,googlevideo.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,youtube-nocookie.com,🇸🇬 谷歌固定"
+];
+
 const MY_CUSTOM_RULES = [
   // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。
   "DOMAIN-SUFFIX,anhuitelecom.com,DIRECT",
@@ -286,8 +309,8 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.googlevideo\\.com$,DIRECT",
   // 个人代理例外和Steam下载例外
   "DOMAIN,apps.cmacked.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,gvt1.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,gvt2.com,🌎 个人规则",
+  "DOMAIN-SUFFIX,gvt1.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,gvt2.com,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,xa.steampowered.com,DIRECT",
   "DOMAIN-SUFFIX,steampowered.com,🌎 个人规则",
   "DOMAIN-SUFFIX,steamcommunity.com,🌎 个人规则",
@@ -364,15 +387,9 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,hanime1.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hanimeone.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hembed.com,🇭🇰 香港固定",
-  // Google通用服务，AI和登录在前面单列
-  "DOMAIN-SUFFIX,google.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,google.com.hk,🌎 个人规则",
-  "DOMAIN-SUFFIX,google.co.jp,🌎 个人规则",
-  "DOMAIN-SUFFIX,gstatic.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,googleapis.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,googleusercontent.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,deepmind.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,deepmind.google,🌎 个人规则",
+  // Google（搜索、商店、AI、账号、YouTube）需要代理的，统一走新加坡固定出口。
+  // 上面的 dl.google.com、Play 大陆 CDN 直连仍在前，优先于这里。
+  ...GOOGLE_RULES,
   // Telegram，保留裸IP访问规则
   "DOMAIN-SUFFIX,t.me,🌎 个人规则",
   "DOMAIN-SUFFIX,tdesktop.com,🌎 个人规则",
@@ -769,6 +786,8 @@ function main(config) {
     auto("♻️ 自动选择",names),
     // 用户已确认启用此唯一出口；首项不是自动挑选，失败也不切到其他节点。
     selected(AI_FIXED_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
+    // Google 单独成组，出口同样是新加坡固定；节点缺失时直接 REJECT，不回落机场。
+    selected(GOOGLE_SG_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
     selected("💲 美国规则",["REJECT",...us]),
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),

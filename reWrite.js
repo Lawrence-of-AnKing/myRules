@@ -76,6 +76,11 @@ const ANTHROPIC_RULES = [
   "DOMAIN-KEYWORD,anthropic,🔒 ChatGPT / Claude",
   "DOMAIN-KEYWORD,claude,🔒 ChatGPT / Claude"
 ];
+// DeepSeek 官方 Search/Fetch 接口按调用方入口地区分配抓取节点：大陆入口用境内爬虫
+// （维基百科、BBC 等抓不到），海外入口用香港爬虫。固定走 AI 出口以保证抓取覆盖。
+const DEEPSEEK_RULES = [
+  "DOMAIN-SUFFIX,deepseek.com,🔒 ChatGPT / Claude"
+];
 const OPENAI_RULES = [
   "DOMAIN-SUFFIX,chatgpt.com,🔒 ChatGPT / Claude",
   "DOMAIN-SUFFIX,chatgpt.site,🔒 ChatGPT / Claude",
@@ -143,7 +148,7 @@ const US_RULES = [
   "DOMAIN,js.stripe.com,💲 美国规则",
   "DOMAIN,workos.imgix.net,💲 美国规则"
 ];
-const AI_RULES = [...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
+const AI_RULES = [...DEEPSEEK_RULES, ...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
 
 // 三、系统服务与OneDrive。用途例外先于宽泛的微软/Apple/CDN规则。
 const APPLE_DIRECT_RULES = [

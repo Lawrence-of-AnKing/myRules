@@ -678,6 +678,12 @@ const DNS_SETTINGS = {
       "https://1.1.1.1/dns-query#🌎 个人规则",
       "https://dns.google/dns-query#🌎 个人规则"
     ],
+    // DeepSeek 接口在国内 DNS 下解析到 EdgeOne 大陆边缘，会按 IP 走直连、绕开域名规则；
+    // 用代理 DoH 解析到海外边缘（CloudFront），才能进 TUN 并命中 AI 出口。
+    "+.deepseek.com": [
+      "https://1.1.1.1/dns-query#🔒 ChatGPT / Claude",
+      "https://dns.google/dns-query#🔒 ChatGPT / Claude"
+    ],
     "+.anhuitelecom.com": [
       "https://dns.alidns.com/dns-query",
       "223.5.5.5"

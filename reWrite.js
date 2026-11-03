@@ -266,6 +266,10 @@ const GOOGLE_RULES = [
 ];
 
 const MY_CUSTOM_RULES = [
+  // 目标站点按出口 IP 判定可用地区，固定走台湾出口，不交自动测速。
+  "DOMAIN-SUFFIX,bybit.com,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybitglobal.com,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybit.global,🪙 Bybit",
   // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。
   "DOMAIN-SUFFIX,anhuitelecom.com,DIRECT",
   // 微信、QQ和腾讯服务直连
@@ -730,6 +734,9 @@ const US_PATTERN = /美国|美國|🇺🇸|🇺🇲|波特兰|达拉斯|俄勒�
 // 地区只用于筛选用途候选，不再生成同名的地区选择组。
 const HK_PATTERN = /香港|🇭🇰|(?:^|[^a-z])HK(?:[^a-z]|$)|Hong Kong/i;
 const SG_PATTERN = /新加坡|狮城|獅城|🇸🇬|(?:^|[^a-z])SG(?:[^a-z]|$)|Singapore/i;
+const TW_PATTERN = /台湾|台灣|臺灣|🇨🇳|🇹🇼|(?:^|[^a-z])TW(?:[^a-z]|$)|Taiwan|Taipei|台北/i;
+// 该组候选排除美国、香港、新加坡、日本、加拿大：均为官方受限或按 IP 判定居民的地区。
+const BYBIT_REGION_PATTERN = /韩国|韓國|德国|德國|英国|英國|法国|法國|澳大利亚|澳洲|土耳其|印度|🇰🇷|🇩🇪|🇬🇧|🇫🇷|🇦🇺|🇹🇷|🇮🇳/i;
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
 function unique(values) { return [...new Set(values)]; }
 function nonempty(values) { return values.length ? unique(values) : ["REJECT"]; }
@@ -781,6 +788,9 @@ function main(config) {
   const hk = ieplFirst(fixedCandidates(names, HK_PATTERN));
   const hkCline = [...hk].sort((a,b) => (/香港S09\s*\|\s*IEPL/i.test(b)?1:0) - (/香港S09\s*\|\s*IEPL/i.test(a)?1:0));
   const sg = ieplFirst(fixedCandidates(names, SG_PATTERN));
+  // 台湾优先，其后按备用地区补位；候选为空时由 nonempty 回落到 REJECT。
+  const bybit = [...ieplFirst(fixedCandidates(names, TW_PATTERN)), ...fixedCandidates(names, BYBIT_REGION_PATTERN)]
+    .filter((name, i, all) => all.indexOf(name) === i);
   const downloads = names.filter(name => /下载/.test(name) || rateOf(name) <= 0.1)
     .filter(name => !/免费|免費|到期|剩余|有效期|官网|流量[:：]/.test(name));
   downloads.sort((a,b) => (isNaN(rateOf(a))?1:rateOf(a)) - (isNaN(rateOf(b))?1:rateOf(b)));
@@ -803,7 +813,8 @@ function main(config) {
     selected("📥 下载分流",[...downloads,"🌎 个人规则","🚀 手动切换"]),
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),
     selected("📢 谷歌FCM",["DIRECT","🌐 默认代理","🚀 手动切换",...us]),
-    selected("🛰️ Tailnet",[TS_PROXY_NAME,"DIRECT"])
+    selected("🛰️ Tailnet",[TS_PROXY_NAME,"DIRECT"]),
+    selected("🪙 Bybit",bybit)
   ];
   config["proxy-groups"] = groups;
   const ts = {name:TS_PROXY_NAME, type:"tailscale", udp:true};

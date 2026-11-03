@@ -273,6 +273,15 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,bybit-global.com,🪙 Bybit",
   "DOMAIN-SUFFIX,bybitglobal.com,🪙 Bybit",
   "DOMAIN-SUFFIX,bybit.global,🪙 Bybit",
+  // 安卓 App 实际用轮换的伪装域名（日志实测）：api3/ws2 + byXXXX.(com|net|biz)
+  "DOMAIN-SUFFIX,bybit.biz,🪙 Bybit",
+  "DOMAIN-SUFFIX,byapps.net,🪙 Bybit",
+  "DOMAIN-SUFFIX,byabcde.com,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybdc6.com,🪙 Bybit",
+  "DOMAIN-SUFFIX,byd3c3.com,🪙 Bybit",
+  "DOMAIN-REGEX,^(?:api|api2|api3|ws|ws2|ws3)\\.by[a-z0-9]{3,6}\\.(?:com|net|biz)$,🪙 Bybit",
+  // 安卓上内核能拿到包名，规则随域名更换依然生效；路由器侧拿不到进程信息，规则自然不命中。
+  "PROCESS-NAME,com.bybit.app,🪙 Bybit",
   // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。
   "DOMAIN-SUFFIX,anhuitelecom.com,DIRECT",
   // 微信、QQ和腾讯服务直连
@@ -765,18 +774,6 @@ function main(config) {
   config["log-level"] = "info";
   // 不抢FlClash自己的端口、IPv6、TUN开关设置。
   config.dns = clone(DNS_SETTINGS);
-  // App 自带 DoH/直连固定 IP 时，内核只看得到目标 IP；用握手里的域名还原，域名规则才能生效。
-  config.sniffer = {
-    enable: true,
-    "force-dns-mapping": true,
-    "parse-pure-ip": true,
-    sniff: {
-      HTTP: {ports: [80, "8080-8880"], "override-destination": true},
-      TLS: {ports: [443, 8443], "override-destination": true},
-      QUIC: {ports: [443, 8443], "override-destination": true}
-    },
-    "skip-domain": ["+.push.apple.com", "+.wechat.com", "+.qq.com"]
-  };
   config.dns["nameserver-policy"]["+.ts.net"] = ["100.100.100.100"];
 
   const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME && p.name !== IPROYAL_PROXY_NAME);

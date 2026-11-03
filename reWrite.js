@@ -268,6 +268,9 @@ const GOOGLE_RULES = [
 const MY_CUSTOM_RULES = [
   // 目标站点按出口 IP 判定可用地区，固定走台湾出口，不交自动测速。
   "DOMAIN-SUFFIX,bybit.com,🪙 Bybit",
+  "DOMAIN-SUFFIX,bytick.com,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybit.app,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybit-global.com,🪙 Bybit",
   "DOMAIN-SUFFIX,bybitglobal.com,🪙 Bybit",
   "DOMAIN-SUFFIX,bybit.global,🪙 Bybit",
   // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。

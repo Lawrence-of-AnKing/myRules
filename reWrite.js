@@ -765,6 +765,18 @@ function main(config) {
   config["log-level"] = "info";
   // 不抢FlClash自己的端口、IPv6、TUN开关设置。
   config.dns = clone(DNS_SETTINGS);
+  // App 自带 DoH/直连固定 IP 时，内核只看得到目标 IP；用握手里的域名还原，域名规则才能生效。
+  config.sniffer = {
+    enable: true,
+    "force-dns-mapping": true,
+    "parse-pure-ip": true,
+    sniff: {
+      HTTP: {ports: [80, "8080-8880"], "override-destination": true},
+      TLS: {ports: [443, 8443], "override-destination": true},
+      QUIC: {ports: [443, 8443], "override-destination": true}
+    },
+    "skip-domain": ["+.push.apple.com", "+.wechat.com", "+.qq.com"]
+  };
   config.dns["nameserver-policy"]["+.ts.net"] = ["100.100.100.100"];
 
   const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME && p.name !== IPROYAL_PROXY_NAME);

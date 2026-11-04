@@ -267,21 +267,24 @@ const GOOGLE_RULES = [
 
 const MY_CUSTOM_RULES = [
   // 目标站点按出口 IP 判定可用地区，固定走台湾出口，不交自动测速。
-  "DOMAIN-SUFFIX,bybit.com,🪙 Bybit",
-  "DOMAIN-SUFFIX,bytick.com,🪙 Bybit",
-  "DOMAIN-SUFFIX,bybit.app,🪙 Bybit",
-  "DOMAIN-SUFFIX,bybit-global.com,🪙 Bybit",
-  "DOMAIN-SUFFIX,bybitglobal.com,🪙 Bybit",
-  "DOMAIN-SUFFIX,bybit.global,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybit.com,🪙 交易所",
+  "DOMAIN-SUFFIX,bytick.com,🪙 交易所",
+  "DOMAIN-SUFFIX,bybit.app,🪙 交易所",
+  "DOMAIN-SUFFIX,bybit-global.com,🪙 交易所",
+  "DOMAIN-SUFFIX,bybitglobal.com,🪙 交易所",
+  "DOMAIN-SUFFIX,bybit.global,🪙 交易所",
   // 安卓 App 实际用轮换的伪装域名（日志实测）：api3/ws2 + byXXXX.(com|net|biz)
-  "DOMAIN-SUFFIX,bybit.biz,🪙 Bybit",
-  "DOMAIN-SUFFIX,byapps.net,🪙 Bybit",
-  "DOMAIN-SUFFIX,byabcde.com,🪙 Bybit",
-  "DOMAIN-SUFFIX,bybdc6.com,🪙 Bybit",
-  "DOMAIN-SUFFIX,byd3c3.com,🪙 Bybit",
-  "DOMAIN-REGEX,^(?:api|api2|api3|ws|ws2|ws3)\\.by[a-z0-9]{3,6}\\.(?:com|net|biz)$,🪙 Bybit",
+  "DOMAIN-SUFFIX,bybit.biz,🪙 交易所",
+  "DOMAIN-SUFFIX,byapps.net,🪙 交易所",
+  "DOMAIN-SUFFIX,byabcde.com,🪙 交易所",
+  "DOMAIN-SUFFIX,bybdc6.com,🪙 交易所",
+  "DOMAIN-SUFFIX,byd3c3.com,🪙 交易所",
+  "DOMAIN-REGEX,^(?:api|api2|api3|ws|ws2|ws3)\\.by[a-z0-9]{3,6}\\.(?:com|net|biz)$,🪙 交易所",
   // 安卓上内核能拿到包名，规则随域名更换依然生效；路由器侧拿不到进程信息，规则自然不命中。
-  "PROCESS-NAME,com.bybit.app,🪙 Bybit",
+  "PROCESS-NAME,com.bybit.app,🪙 交易所",
+  // OKX：主域 + 自有别名。okex.com / ouyi.cc 当前无解析记录，未收录。
+  "DOMAIN-SUFFIX,okx.com,🪙 交易所",
+  "DOMAIN-SUFFIX,okx.cab,🪙 交易所",   // 证书 CN=*.okx.cab，与 okx.com 同 IP，OKX 自有别名
   // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。
   "DOMAIN-SUFFIX,anhuitelecom.com,DIRECT",
   // 微信、QQ和腾讯服务直连
@@ -747,8 +750,8 @@ const US_PATTERN = /美国|美國|🇺🇸|🇺🇲|波特兰|达拉斯|俄勒�
 const HK_PATTERN = /香港|🇭🇰|(?:^|[^a-z])HK(?:[^a-z]|$)|Hong Kong/i;
 const SG_PATTERN = /新加坡|狮城|獅城|🇸🇬|(?:^|[^a-z])SG(?:[^a-z]|$)|Singapore/i;
 const TW_PATTERN = /台湾|台灣|臺灣|🇨🇳|🇹🇼|(?:^|[^a-z])TW(?:[^a-z]|$)|Taiwan|Taipei|台北/i;
-// 该组候选排除美国、香港、新加坡、日本、加拿大：均为官方受限或按 IP 判定居民的地区。
-const BYBIT_REGION_PATTERN = /韩国|韓國|德国|德國|英国|英國|法国|法國|澳大利亚|澳洲|土耳其|印度|🇰🇷|🇩🇪|🇬🇧|🇫🇷|🇦🇺|🇹🇷|🇮🇳/i;
+// 候选同时排除两家交易所各自受限的地区：美/加/港/新/日/印/英等都不进候选。
+const EXCHANGE_REGION_PATTERN = /韩国|韓國|德国|德國|法国|法國|澳大利亚|澳洲|土耳其|🇰🇷|🇩🇪|🇫🇷|🇦🇺|🇹🇷/i;
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
 function unique(values) { return [...new Set(values)]; }
 function nonempty(values) { return values.length ? unique(values) : ["REJECT"]; }
@@ -801,7 +804,7 @@ function main(config) {
   const hkCline = [...hk].sort((a,b) => (/香港S09\s*\|\s*IEPL/i.test(b)?1:0) - (/香港S09\s*\|\s*IEPL/i.test(a)?1:0));
   const sg = ieplFirst(fixedCandidates(names, SG_PATTERN));
   // 台湾优先，其后按备用地区补位；候选为空时由 nonempty 回落到 REJECT。
-  const bybit = [...ieplFirst(fixedCandidates(names, TW_PATTERN)), ...fixedCandidates(names, BYBIT_REGION_PATTERN)]
+  const exchange = [...ieplFirst(fixedCandidates(names, TW_PATTERN)), ...fixedCandidates(names, EXCHANGE_REGION_PATTERN)]
     .filter((name, i, all) => all.indexOf(name) === i);
   const downloads = names.filter(name => /下载/.test(name) || rateOf(name) <= 0.1)
     .filter(name => !/免费|免費|到期|剩余|有效期|官网|流量[:：]/.test(name));
@@ -826,7 +829,7 @@ function main(config) {
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),
     selected("📢 谷歌FCM",["DIRECT","🌐 默认代理","🚀 手动切换",...us]),
     selected("🛰️ Tailnet",[TS_PROXY_NAME,"DIRECT"]),
-    selected("🪙 Bybit",bybit)
+    selected("🪙 交易所",exchange)
   ];
   config["proxy-groups"] = groups;
   const ts = {name:TS_PROXY_NAME, type:"tailscale", udp:true};

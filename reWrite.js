@@ -79,6 +79,11 @@ const DEEPSEEK_RULES = [
   "DOMAIN-SUFFIX,deepseek.com,🔒 ChatGPT / Claude"
 ];
 const OPENAI_RULES = [
+  // 这两个域名的 QUIC(UDP) 走不通链式第二跳，会从第一跳香港出口出去，被 Cloudflare
+  // 以 403 拒绝（回复渲染小窗 runner.html 加载失败 → 整页显示“无法加载此回复”）。
+  // 拒绝 UDP 后浏览器立即回退 TCP，从新加坡固定出口出去，与主站保持同一 IP。
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,platform.openai.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,chatgpt.com)),REJECT",
   "DOMAIN-SUFFIX,chatgpt.com,🔒 ChatGPT / Claude",
   "DOMAIN-SUFFIX,chatgpt.site,🔒 ChatGPT / Claude",
   "DOMAIN-SUFFIX,openai.com,🔒 ChatGPT / Claude",

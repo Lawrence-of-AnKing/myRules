@@ -235,6 +235,14 @@ const MICROSOFT_DIRECT_RULES = [
 // Google 需要代理的域名统一指向新加坡固定出口。
 // 直连例外（dl.google.com、tools.google.com、Play 大陆 CDN）写在 MY_CUSTOM_RULES 更前面，仍然优先。
 const GOOGLE_RULES = [
+  // Gemini / AI Studio 的 QUIC(UDP) 与 ChatGPT 同因：走不通链式第二跳，会从第一跳
+  // 香港出口出去，Google 按出口 IP 判「地区不支持」并跳 available-regions。
+  // 拒绝 UDP 后浏览器立即回退 TCP，从新加坡固定出口出去，与 AI Studio 主站同一 IP。
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,aistudio.google.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,gemini.google.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,generativelanguage.googleapis.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,ai.google.dev)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,antigravity.google)),REJECT",
   // AI 与账号
   "DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com,🇸🇬 谷歌固定",
   "DOMAIN,daily-cloudcode-pa.googleapis.com,🇸🇬 谷歌固定",

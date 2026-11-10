@@ -73,8 +73,10 @@ async function main() {
   }
   const fixedAI = result['proxy-groups'].find(item => item.name === '🔒 ChatGPT / Claude');
   const fixedNode = result.proxies.find(item => item.name === 'IPRoyal 新加坡固定');
+  // 前置节点以 reWrite.js 的 IPROYAL_FRONT_NODE 常量为唯一来源，避免两处不同步。
+  const declaredFront = vm.runInContext('IPROYAL_FRONT_NODE', context);
   if (fixedAI?.type !== 'select' || JSON.stringify(fixedAI.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT']) ||
-      fixedNode?.type !== 'socks5' || fixedNode['dialer-proxy'] !== '🇭🇰 香港S01') {
+      fixedNode?.type !== 'socks5' || fixedNode['dialer-proxy'] !== declaredFront) {
     throw new Error('AI egress must contain only the explicitly approved private proxy and REJECT');
   }
   for (const node of result.proxies) {

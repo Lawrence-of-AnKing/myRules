@@ -7,7 +7,7 @@
 // 2. “🌐 默认代理”管理其余海外流量和国际版OneDrive/SharePoint；不提供DIRECT兜底。
 // 3. 不再生成美国/香港/日本等地区节点组；国家只用于后台筛选固定用途的候选节点。
 // 4. AI固定组保留原名称和候选节点名，便于沿用各设备已保存的选择，不替你换出口：
-//    “🔒 ChatGPT / Claude”=固定香港 S01 → IPRoyal；“💲 美国规则”=Gemini等既有美国业务及共享服务；
+//    “🔒 ChatGPT / Claude”=固定香港 IEPL → IPRoyal；“💲 美国规则”=Gemini等既有美国业务及共享服务；
 //    “🇭🇰 香港规则”=Cline；“🇸🇬 WorkBuddy”=WorkBuddy；“🇭🇰 香港固定”=GitHub等既有固定线路。
 //    固定组只列对应地区的实际节点（保留原有明确选用Anthropic的选项），不挂手动/自动组。
 //    尚未保存选择，或已选节点从订阅消失时，默认REJECT；请确认原来使用的节点后再选。
@@ -24,7 +24,7 @@
 // 一、Tailscale和内网。Tailnet必须先于一般private规则。
 const TS_PROXY_NAME = "tailnet";
 // 前置与最终出口均显式固定；不按地区排序或测速自动换节点。
-const IPROYAL_FRONT_NODE = "🇭🇰 香港S01";
+const IPROYAL_FRONT_NODE = "🇭🇰 香港S02 | IEPL";
 const IPROYAL_PROXY_NAME = "IPRoyal 新加坡固定";
 const AI_FIXED_GROUP = "🔒 ChatGPT / Claude";
 const GOOGLE_SG_GROUP = "🇸🇬 谷歌固定";

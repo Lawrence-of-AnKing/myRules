@@ -561,6 +561,12 @@ const MY_CUSTOM_RULES = [
   "DOMAIN,api2.qiuqiutoken.jiawuyu.com,DIRECT",
   "DOMAIN,api.kozeai.com,DIRECT",
   "DOMAIN-SUFFIX,91topgo.com,DIRECT",
+  // 宝可梦机场（web4.52pokemon.cc / web3.52pokemon66.cc）：前端页面走代理正常，
+  // 但业务接口 api123.136470.xyz 经机场节点会 TLS 握手被丢（状态0，登录/套餐/流量全空），
+  // 实测直连与香港S10可通，按用户要求走直连。
+  "DOMAIN-SUFFIX,52pokemon.cc,DIRECT",
+  "DOMAIN-SUFFIX,52pokemon66.cc,DIRECT",
+  "DOMAIN-SUFFIX,136470.xyz,DIRECT",
   // 坚果云客户端直连
   "PROCESS-NAME,NutstoreClient.exe,DIRECT",
   "PROCESS-NAME,Nutstore.exe,DIRECT",

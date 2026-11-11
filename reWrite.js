@@ -8,7 +8,8 @@
 // 3. 不再生成美国/香港/日本等地区节点组；国家只用于后台筛选固定用途的候选节点。
 // 4. AI固定组保留原名称和候选节点名，便于沿用各设备已保存的选择，不替你换出口：
 //    “🔒 ChatGPT / Claude”=固定香港 IEPL → IPRoyal；“💲 美国规则”=Gemini等既有美国业务及共享服务；
-//    “🇭🇰 香港规则”=Cline；“🇸🇬 WorkBuddy”=WorkBuddy；“🇭🇰 香港固定”=GitHub等既有固定线路。
+//    “🇭🇰 香港规则”=Cline；“🇸🇬 WorkBuddy”=WorkBuddy；“🇭🇰 香港固定”=GitHub等既有固定线路；
+//    “🇭🇰 DeepSeek”=DeepSeek 官方接口（2026-11-11 从 AI 组移出，见 DEEPSEEK_RULES）。
 //    固定组只列对应地区的实际节点（保留原有明确选用Anthropic的选项），不挂手动/自动组。
 //    尚未保存选择，或已选节点从订阅消失时，默认REJECT；请确认原来使用的节点后再选。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
@@ -74,9 +75,13 @@ const ANTHROPIC_RULES = [
   "DOMAIN-KEYWORD,claude,🔒 ChatGPT / Claude"
 ];
 // DeepSeek 官方 Search/Fetch 接口按调用方入口地区分配抓取节点：大陆入口用境内爬虫
-// （维基百科、BBC 等抓不到），海外入口用香港爬虫。固定走 AI 出口以保证抓取覆盖。
+// （维基百科、BBC 等抓不到），海外入口用香港爬虫。只需要“海外入口”，不必须新加坡出口。
+// 2026-11-11 实测：同一域名走香港 IEPL 稳定在 0.19s，而经 IPRoyal 新加坡落地是 0.58s
+// 基线且约三成请求重传到 1.2–1.6s（TLS 握手尖峰，TCP 层正常）。故独立走香港 IEPL，
+// 不占用 IPRoyal 的前置节点，也不与 Cline（香港S09）抢。
+const DEEPSEEK_GROUP = "🇭🇰 DeepSeek";
 const DEEPSEEK_RULES = [
-  "DOMAIN-SUFFIX,deepseek.com,🔒 ChatGPT / Claude"
+  "DOMAIN-SUFFIX,deepseek.com,🇭🇰 DeepSeek"
 ];
 const OPENAI_RULES = [
   // 这两个域名的 QUIC(UDP) 走不通链式第二跳，会从第一跳香港出口出去，被 Cloudflare
@@ -708,10 +713,10 @@ const DNS_SETTINGS = {
       "https://dns.google/dns-query#🌎 个人规则"
     ],
     // DeepSeek 接口在国内 DNS 下解析到 EdgeOne 大陆边缘，会按 IP 走直连、绕开域名规则；
-    // 用代理 DoH 解析到海外边缘（CloudFront），才能进 TUN 并命中 AI 出口。
+    // 用代理 DoH 解析到海外边缘（CloudFront），才能进 TUN 并命中香港出口。
     "+.deepseek.com": [
-      "https://1.1.1.1/dns-query#🔒 ChatGPT / Claude",
-      "https://dns.google/dns-query#🔒 ChatGPT / Claude"
+      "https://1.1.1.1/dns-query#🇭🇰 DeepSeek",
+      "https://dns.google/dns-query#🇭🇰 DeepSeek"
     ],
     "+.anhuitelecom.com": [
       "https://dns.alidns.com/dns-query",
@@ -815,6 +820,9 @@ function main(config) {
   const us = fixedCandidates(names, US_PATTERN);
   const hk = ieplFirst(fixedCandidates(names, HK_PATTERN));
   const hkCline = [...hk].sort((a,b) => (/香港S09\s*\|\s*IEPL/i.test(b)?1:0) - (/香港S09\s*\|\s*IEPL/i.test(a)?1:0));
+  // DeepSeek 只用香港 IEPL：排除 IPRoyal 的前置节点，避免两条流量抢同一条入口。
+  const hkIepl = hk.filter(name => /IEPL/i.test(name) && name !== IPROYAL_FRONT_NODE);
+  const hkDeepSeek = hkIepl.length ? hkIepl : hk;
   const sg = ieplFirst(fixedCandidates(names, SG_PATTERN));
   // 台湾优先，其后按备用地区补位；候选为空时由 nonempty 回落到 REJECT。
   const exchange = [...ieplFirst(fixedCandidates(names, TW_PATTERN)), ...fixedCandidates(names, EXCHANGE_REGION_PATTERN)]
@@ -837,6 +845,8 @@ function main(config) {
     selected("💲 美国规则",["REJECT",...us]),
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),
+    // 首项即默认出口（select 不自动测速）；候选为空时 nonempty 回落 REJECT。
+    selected(DEEPSEEK_GROUP,hkDeepSeek),
     selected("🇸🇬 WorkBuddy",["REJECT",...sg]),
     selected("📥 下载分流",[...downloads,"🌎 个人规则","🚀 手动切换"]),
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),

@@ -6,16 +6,14 @@
 // 1. “🌎 个人规则”管理自己收录的网站；默认跟随“🚀 手动切换”，限流时在后者换节点。
 // 2. “🌐 默认代理”管理其余海外流量和国际版OneDrive/SharePoint；不提供DIRECT兜底。
 // 3. 不再生成美国/香港/日本等地区节点组；国家只用于后台筛选固定用途的候选节点。
-// 4. AI固定组保留原名称和候选节点名，便于沿用各设备已保存的选择，不替你换出口：
-//    “🔒 ChatGPT / Claude”=固定香港 IEPL → IPRoyal；“💲 美国规则”=Gemini等既有美国业务及共享服务；
-//    “🇭🇰 香港规则”=Cline；“🇸🇬 WorkBuddy”=WorkBuddy；“🇭🇰 香港固定”=GitHub等既有固定线路；
-//    “🇭🇰 DeepSeek”=DeepSeek 官方接口（2026-11-11 从 AI 组移出，见 DEEPSEEK_RULES）。
-//    固定组只列对应地区的实际节点（保留原有明确选用Anthropic的选项），不挂手动/自动组。
-//    尚未保存选择，或已选节点从订阅消失时，默认REJECT；请确认原来使用的节点后再选。
+// 4. AI 分组连续排列：🔒 Claude → 🔒 ChatGPT → ♊ Gemini → 🐳 DeepSeek。
+//    Claude 只允许新加坡固定出口和 REJECT；ChatGPT/Gemini 默认仍是新加坡固定出口，
+//    可在各自组内手动选择实际节点（不挂自动选择组，不与全局手动切换联动）。
+//    DeepSeek 仍用原来的香港 IEPL 候选。重命名后旧组的本机选择不会迁移，请核对一次。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
 // 7. 已移除 AI 专用入口（原 127.0.0.1:17907 / 17904）：AI 域名改由规则分流
-//    （🔒 ChatGPT / Claude、🇭🇰 香港规则等），客户端不设代理即由 TUN 或上级路由接管。
+//    （🔒 Claude、🔒 ChatGPT、🇭🇰 香港规则等），客户端不设代理即由 TUN 或上级路由接管。
 //    17901/17902 的 WorkBuddy 槽位保留。
 //
 // 个人直连/全球直连不再占选择组，已确认的直连规则直接指向DIRECT；基础MRS仍自动更新。
@@ -27,7 +25,9 @@ const TS_PROXY_NAME = "tailnet";
 // 前置与最终出口均显式固定；不按地区排序或测速自动换节点。
 const IPROYAL_FRONT_NODE = "🇭🇰 香港S02 | IEPL";
 const IPROYAL_PROXY_NAME = "IPRoyal 新加坡固定";
-const AI_FIXED_GROUP = "🔒 ChatGPT / Claude";
+const AI_FIXED_GROUP = "🔒 Claude";
+const CHATGPT_GROUP = "🔒 ChatGPT";
+const GEMINI_GROUP = "♊ Gemini";
 const GOOGLE_SG_GROUP = "🇸🇬 谷歌固定";
 const US_FIXED_NODE = "🇺🇲 美国S01 | IEPL | x1.5";
 const TS_AUTH_KEY = ""; // 不在同步脚本里放密钥。
@@ -54,74 +54,75 @@ const TUN_TAILSCALE_SETTINGS = {"route-exclude-address":["192.168.0.0/16"],"excl
 
 // 二、AI指定出口。后缀会覆盖子域名，不重复抄每个API和下载子域。
 const ANTHROPIC_RULES = [
-  "DOMAIN-SUFFIX,anthropic.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,claude.ai,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,claude.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,clau.de,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,claude.app,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,claudeusercontent.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,claudemcpclient.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,claudemcpcontent.com,🔒 ChatGPT / Claude",
-  "DOMAIN,servd-anthropic-website.b-cdn.net,🔒 ChatGPT / Claude",
-  "DOMAIN,anthropic.com.cdn.cloudflare.net,🔒 ChatGPT / Claude",
-  "DOMAIN,cdn.usefathom.com,🔒 ChatGPT / Claude",
-  "DOMAIN,anthropic-com.ghost.io,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,statsigapi.net,🔒 ChatGPT / Claude",
-  "DOMAIN,browser-intake-us5-datadoghq.com,🔒 ChatGPT / Claude",
-  "DOMAIN,http-intake.logs.us5.datadoghq.com,🔒 ChatGPT / Claude",
-  "IP-CIDR,160.79.104.0/21,🔒 ChatGPT / Claude,no-resolve",
-  "IP-CIDR6,2607:6bc0::/32,🔒 ChatGPT / Claude,no-resolve",
-  "DOMAIN-KEYWORD,anthropic,🔒 ChatGPT / Claude",
-  "DOMAIN-KEYWORD,claude,🔒 ChatGPT / Claude"
+  "DOMAIN-SUFFIX,anthropic.com,🔒 Claude",
+  "DOMAIN-SUFFIX,claude.ai,🔒 Claude",
+  "DOMAIN-SUFFIX,claude.com,🔒 Claude",
+  "DOMAIN-SUFFIX,clau.de,🔒 Claude",
+  "DOMAIN-SUFFIX,claude.app,🔒 Claude",
+  "DOMAIN-SUFFIX,claudeusercontent.com,🔒 Claude",
+  "DOMAIN-SUFFIX,claudemcpclient.com,🔒 Claude",
+  "DOMAIN-SUFFIX,claudemcpcontent.com,🔒 Claude",
+  "DOMAIN,servd-anthropic-website.b-cdn.net,🔒 Claude",
+  "DOMAIN,anthropic.com.cdn.cloudflare.net,🔒 Claude",
+  "DOMAIN,cdn.usefathom.com,🔒 Claude",
+  "DOMAIN,anthropic-com.ghost.io,🔒 Claude",
+  "DOMAIN-SUFFIX,statsigapi.net,🔒 Claude",
+  "DOMAIN,browser-intake-us5-datadoghq.com,🔒 Claude",
+  "DOMAIN,http-intake.logs.us5.datadoghq.com,🔒 Claude",
+  "IP-CIDR,160.79.104.0/21,🔒 Claude,no-resolve",
+  "IP-CIDR6,2607:6bc0::/32,🔒 Claude,no-resolve",
+  "DOMAIN-KEYWORD,anthropic,🔒 Claude",
+  "DOMAIN-KEYWORD,claude,🔒 Claude"
 ];
 // DeepSeek 官方 Search/Fetch 接口按调用方入口地区分配抓取节点：大陆入口用境内爬虫
 // （维基百科、BBC 等抓不到），海外入口用香港爬虫。只需要“海外入口”，不必须新加坡出口。
 // 2026-11-11 实测：同一域名走香港 IEPL 稳定在 0.19s，而经 IPRoyal 新加坡落地是 0.58s
 // 基线且约三成请求重传到 1.2–1.6s（TLS 握手尖峰，TCP 层正常）。故独立走香港 IEPL，
 // 不占用 IPRoyal 的前置节点，也不与 Cline（香港S09）抢。
-const DEEPSEEK_GROUP = "🇭🇰 DeepSeek";
+const DEEPSEEK_GROUP = "🐳 DeepSeek";
 const DEEPSEEK_RULES = [
-  "DOMAIN-SUFFIX,deepseek.com,🇭🇰 DeepSeek"
+  "DOMAIN-SUFFIX,deepseek.com,🐳 DeepSeek"
 ];
 const OPENAI_RULES = [
   // 这两个域名的 QUIC(UDP) 走不通链式第二跳，会从第一跳香港出口出去，被 Cloudflare
   // 以 403 拒绝（回复渲染小窗 runner.html 加载失败 → 整页显示“无法加载此回复”）。
-  // 拒绝 UDP 后浏览器立即回退 TCP，从新加坡固定出口出去，与主站保持同一 IP。
+  // 拒绝 UDP 后浏览器回退 TCP，使用 ChatGPT 组当前选定的出口。
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,platform.openai.com)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,chatgpt.com)),REJECT",
-  "DOMAIN-SUFFIX,chatgpt.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,chatgpt.site,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openai.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openai.org,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,chat.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,sora.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,oaistatic.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,oaiusercontent.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,oaistatsig.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openaimerge.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,crixet.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,featuregates.org,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,statsig.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openaiassets.blob.core.windows.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openaicom.imgix.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openaiapi-site.azureedge.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,production-openaicom-storage.azureedge.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,webpubsub.azure.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,client-api.arkoselabs.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,openai-api.arkoselabs.com,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,chatgpt.livekit.cloud,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,host.livekit.cloud,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,turn.livekit.cloud,🔒 ChatGPT / Claude",
-  "DOMAIN-SUFFIX,browser-intake-datadoghq.com,🔒 ChatGPT / Claude",
-  "DOMAIN-KEYWORD,openai,🔒 ChatGPT / Claude",
-  "DOMAIN-KEYWORD,chatgpt,🔒 ChatGPT / Claude",
+  "DOMAIN-SUFFIX,chatgpt.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,chatgpt.site,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openai.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openai.org,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,chat.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,sora.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,oaistatic.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,oaiusercontent.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,oaistatsig.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openaimerge.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,crixet.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,featuregates.org,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,statsig.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openaiassets.blob.core.windows.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openaicom.imgix.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openaiapi-site.azureedge.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,production-openaicom-storage.azureedge.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openaicomproductionae4b.blob.core.windows.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,webpubsub.azure.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,client-api.arkoselabs.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,openai-api.arkoselabs.com,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,chatgpt.livekit.cloud,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,host.livekit.cloud,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,turn.livekit.cloud,🔒 ChatGPT",
+  "DOMAIN-SUFFIX,browser-intake-datadoghq.com,🔒 ChatGPT",
+  "DOMAIN-KEYWORD,openai,🔒 ChatGPT",
+  "DOMAIN-KEYWORD,chatgpt,🔒 ChatGPT",
 ];
 const US_RULES = [
   "DOMAIN-SUFFIX,auth0.com,💲 美国规则",
-  "DOMAIN,challenges.cloudflare.com,🔒 ChatGPT / Claude",
+  // 两平台共享的验证域名保持 Claude 固定出口，避免 ChatGPT 手动选项牵动 Claude。
+  "DOMAIN,challenges.cloudflare.com,🔒 Claude",
   "DOMAIN-SUFFIX,workos.com,💲 美国规则",
   "DOMAIN-SUFFIX,workoscdn.com,💲 美国规则",
   "DOMAIN-SUFFIX,intercom.io,💲 美国规则",
@@ -237,34 +238,34 @@ const MICROSOFT_DIRECT_RULES = [
 ];
 
 // 四、个人业务例外。保留既有意图，只合并明确重复。
-// Google 需要代理的域名统一指向新加坡固定出口。
+// Google AI 与登录使用 Gemini 组，其余谷歌服务保留固定新加坡出口。
 // 直连例外（dl.google.com、tools.google.com、Play 大陆 CDN）写在 MY_CUSTOM_RULES 更前面，仍然优先。
 const GOOGLE_RULES = [
   // Gemini / AI Studio 的 QUIC(UDP) 与 ChatGPT 同因：走不通链式第二跳，会从第一跳
   // 香港出口出去，Google 按出口 IP 判「地区不支持」并跳 available-regions。
-  // 拒绝 UDP 后浏览器立即回退 TCP，从新加坡固定出口出去，与 AI Studio 主站同一 IP。
+  // 拒绝 UDP 后浏览器回退 TCP，使用 Gemini 组当前选定的出口。
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,aistudio.google.com)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,gemini.google.com)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,generativelanguage.googleapis.com)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,ai.google.dev)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,antigravity.google)),REJECT",
   // AI 与账号
-  "DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN,daily-cloudcode-pa.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN,cloudcode-pa.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN,cloudcode-pa.sandbox.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN,oauth2.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN,proactivebackend-pa.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN,alkalimakersuite-pa.clients6.google.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,antigravity.google,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,aistudio.google.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,makersuite.google.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,generativelanguage.googleapis.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,generativeai.google,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,ai.google.dev,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,gemini.google.com,🇸🇬 谷歌固定",
-  "DOMAIN,accounts.google.com,🇸🇬 谷歌固定",
-  "DOMAIN,accounts.googleusercontent.com,🇸🇬 谷歌固定",
+  "DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com,♊ Gemini",
+  "DOMAIN,daily-cloudcode-pa.googleapis.com,♊ Gemini",
+  "DOMAIN,cloudcode-pa.googleapis.com,♊ Gemini",
+  "DOMAIN,cloudcode-pa.sandbox.googleapis.com,♊ Gemini",
+  "DOMAIN,oauth2.googleapis.com,♊ Gemini",
+  "DOMAIN,proactivebackend-pa.googleapis.com,♊ Gemini",
+  "DOMAIN,alkalimakersuite-pa.clients6.google.com,♊ Gemini",
+  "DOMAIN-SUFFIX,antigravity.google,♊ Gemini",
+  "DOMAIN-SUFFIX,aistudio.google.com,♊ Gemini",
+  "DOMAIN-SUFFIX,makersuite.google.com,♊ Gemini",
+  "DOMAIN-SUFFIX,generativelanguage.googleapis.com,♊ Gemini",
+  "DOMAIN-SUFFIX,generativeai.google,♊ Gemini",
+  "DOMAIN-SUFFIX,ai.google.dev,♊ Gemini",
+  "DOMAIN-SUFFIX,gemini.google.com,♊ Gemini",
+  "DOMAIN,accounts.google.com,♊ Gemini",
+  "DOMAIN,accounts.googleusercontent.com,♊ Gemini",
   // 通用服务
   "DOMAIN-SUFFIX,google.com,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,google.com.hk,🇸🇬 谷歌固定",
@@ -426,7 +427,7 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,hanime1.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hanimeone.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hembed.com,🇭🇰 香港固定",
-  // Google（搜索、商店、AI、账号、YouTube）需要代理的，统一走新加坡固定出口。
+  // Google AI/账号与普通谷歌服务分别分组，精确 AI 规则先于宽泛域名。
   // 上面的 dl.google.com、Play 大陆 CDN 直连仍在前，优先于这里。
   ...GOOGLE_RULES,
   // Telegram，保留裸IP访问规则
@@ -721,8 +722,8 @@ const DNS_SETTINGS = {
     // DeepSeek 接口在国内 DNS 下解析到 EdgeOne 大陆边缘，会按 IP 走直连、绕开域名规则；
     // 用代理 DoH 解析到海外边缘（CloudFront），才能进 TUN 并命中香港出口。
     "+.deepseek.com": [
-      "https://1.1.1.1/dns-query#🇭🇰 DeepSeek",
-      "https://dns.google/dns-query#🇭🇰 DeepSeek"
+      "https://1.1.1.1/dns-query#🐳 DeepSeek",
+      "https://dns.google/dns-query#🐳 DeepSeek"
     ],
     "+.anhuitelecom.com": [
       "https://dns.alidns.com/dns-query",
@@ -838,7 +839,7 @@ function main(config) {
   downloads.sort((a,b) => (isNaN(rateOf(a))?1:rateOf(a)) - (isNaN(rateOf(b))?1:rateOf(b)));
 
   // 保留常用的两套控制：个人网站跟手动切换，其他流量由默认代理决定。
-  // 固定用途保留旧组名作为本机选择的键，避免重命名令AI出口悄悄重置。
+  // 新 AI 组首项保留原出口，不引入自动换节点。
   const groups = [
     selected("🌎 个人规则",["🚀 手动切换","♻️ 自动选择",...names]),
     selected("🚀 手动切换",names),
@@ -846,13 +847,15 @@ function main(config) {
     auto("♻️ 自动选择",names),
     // 用户已确认启用此唯一出口；首项不是自动挑选，失败也不切到其他节点。
     selected(AI_FIXED_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
-    // Google 单独成组，出口同样是新加坡固定；节点缺失时直接 REJECT，不回落机场。
+    selected(CHATGPT_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT",...names]),
+    selected(GEMINI_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT",...names]),
+    // 首项即默认出口，保持 DeepSeek 原候选顺序。
+    selected(DEEPSEEK_GROUP,hkDeepSeek),
+    // 搜索、YouTube 等普通谷歌服务保持固定出口。
     selected(GOOGLE_SG_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
     selected("💲 美国规则",["REJECT",...us]),
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),
-    // 首项即默认出口（select 不自动测速）；候选为空时 nonempty 回落 REJECT。
-    selected(DEEPSEEK_GROUP,hkDeepSeek),
     selected("🇸🇬 WorkBuddy",["REJECT",...sg]),
     selected("📥 下载分流",[...downloads,"🌎 个人规则","🚀 手动切换"]),
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),

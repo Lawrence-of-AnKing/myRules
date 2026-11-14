@@ -71,13 +71,26 @@ async function main() {
       throw new Error('Sensitive groups must default to REJECT; saved choices stay on each device');
     }
   }
-  const fixedAI = result['proxy-groups'].find(item => item.name === '🔒 ChatGPT / Claude');
+  const fixedAI = result['proxy-groups'].find(item => item.name === '🔒 Claude');
   const fixedNode = result.proxies.find(item => item.name === 'IPRoyal 新加坡固定');
   // 前置节点以 reWrite.js 的 IPROYAL_FRONT_NODE 常量为唯一来源，避免两处不同步。
   const declaredFront = vm.runInContext('IPROYAL_FRONT_NODE', context);
   if (fixedAI?.type !== 'select' || JSON.stringify(fixedAI.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT']) ||
       fixedNode?.type !== 'socks5' || fixedNode['dialer-proxy'] !== declaredFront) {
     throw new Error('AI egress must contain only the explicitly approved private proxy and REJECT');
+  }
+  const aiNames = ['🔒 Claude', '🔒 ChatGPT', '♊ Gemini', '🐳 DeepSeek'];
+  const displayed = result['proxy-groups'].map(group => group.name);
+  const firstAI = displayed.indexOf(aiNames[0]);
+  if (JSON.stringify(displayed.slice(firstAI, firstAI + 4)) !== JSON.stringify(aiNames)) {
+    throw new Error('AI groups must remain adjacent in the approved display order');
+  }
+  const airportNames = result['proxy-groups'].find(group => group.name === '🚀 手动切换').proxies;
+  for (const name of aiNames.slice(1, 3)) {
+    const group = result['proxy-groups'].find(item => item.name === name);
+    if (group?.type !== 'select' || JSON.stringify(group.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT', ...airportNames])) {
+      throw new Error('ChatGPT and Gemini must default to fixed Singapore with independent manual node choices');
+    }
   }
   for (const node of result.proxies) {
     if (node['dialer-proxy'] && !targets.has(node['dialer-proxy'])) {

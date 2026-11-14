@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "5c52a2ea66e86c89d2ebd5de84be895dbe569636",
-  "sourceSha256": "005a199a6df0ef545e238bfce2a2ffe3b325eb954e5edfa8ff95a422e199ff54",
-  "configSha256": "1b9e3c74c20f6f1192d524f98fe12c591bac95ee1897d53f5652ef6dcc39d442",
-  "generatedAt": "2026-11-13T19:52:18.523Z",
+  "sourceCommit": "676051d24b2646558e1d2dc7c3ee4e453db9f9bc",
+  "sourceSha256": "9377aabc636e9b2327e0515af9b30aad45599ae401ebf253daf3d5c1d3b75144",
+  "configSha256": "cb2f4fd9f7759e4b817e311c84f30413e3b05e6ae2c4dccb21cc55895b26f3f2",
+  "generatedAt": "2026-11-14T02:25:45.142Z",
   "encryption": "age-X25519",
   "counts": {
     "proxies": 48,
-    "groups": 16,
+    "groups": 18,
     "rules": 464
   }
 }

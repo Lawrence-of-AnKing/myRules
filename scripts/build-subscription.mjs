@@ -85,11 +85,10 @@ async function main() {
   if (JSON.stringify(displayed.slice(firstAI, firstAI + 4)) !== JSON.stringify(aiNames)) {
     throw new Error('AI groups must remain adjacent in the approved display order');
   }
-  const airportNames = result['proxy-groups'].find(group => group.name === '🚀 手动切换').proxies;
-  for (const name of aiNames.slice(1, 3)) {
+  for (const name of [...aiNames.slice(1, 3), '🇸🇬 谷歌固定']) {
     const group = result['proxy-groups'].find(item => item.name === name);
-    if (group?.type !== 'select' || JSON.stringify(group.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT', ...airportNames])) {
-      throw new Error('ChatGPT and Gemini must default to fixed Singapore with independent manual node choices');
+    if (group?.type !== 'select' || JSON.stringify(group.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT', '🚀 手动切换'])) {
+      throw new Error('ChatGPT, Gemini and Google must default to fixed Singapore and offer the shared manual selector');
     }
   }
   for (const node of result.proxies) {

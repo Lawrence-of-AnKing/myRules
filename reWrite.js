@@ -8,7 +8,7 @@
 // 3. 不再生成美国/香港/日本等地区节点组；国家只用于后台筛选固定用途的候选节点。
 // 4. AI 分组连续排列：🔒 Claude → 🔒 ChatGPT → ♊ Gemini → 🐳 DeepSeek。
 //    Claude 只允许新加坡固定出口和 REJECT；ChatGPT/Gemini 默认仍是新加坡固定出口，
-//    可在各自组内手动选择实际节点（不挂自动选择组，不与全局手动切换联动）。
+//    ChatGPT/Gemini/谷歌固定可选“🚀 手动切换”并跟随它，不平铺机场节点，不挂自动组。
 //    DeepSeek 仍用原来的香港 IEPL 候选。重命名后旧组的本机选择不会迁移，请核对一次。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
@@ -847,12 +847,12 @@ function main(config) {
     auto("♻️ 自动选择",names),
     // 用户已确认启用此唯一出口；首项不是自动挑选，失败也不切到其他节点。
     selected(AI_FIXED_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
-    selected(CHATGPT_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT",...names]),
-    selected(GEMINI_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT",...names]),
+    selected(CHATGPT_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT","🚀 手动切换"]),
+    selected(GEMINI_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT","🚀 手动切换"]),
     // 首项即默认出口，保持 DeepSeek 原候选顺序。
     selected(DEEPSEEK_GROUP,hkDeepSeek),
-    // 搜索、YouTube 等普通谷歌服务保持固定出口。
-    selected(GOOGLE_SG_GROUP,iproyal?[IPROYAL_PROXY_NAME,"REJECT"]:["REJECT"]),
+    // 搜索、YouTube 默认固定出口，也可手动选“🚀 手动切换”联动。
+    selected(GOOGLE_SG_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT","🚀 手动切换"]),
     selected("💲 美国规则",["REJECT",...us]),
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),

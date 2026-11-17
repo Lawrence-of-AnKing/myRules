@@ -430,7 +430,13 @@ const MY_CUSTOM_RULES = [
   // Google AI/账号与普通谷歌服务分别分组，精确 AI 规则先于宽泛域名。
   // 上面的 dl.google.com、Play 大陆 CDN 直连仍在前，优先于这里。
   ...GOOGLE_RULES,
-  // Telegram，保留裸IP访问规则
+  // Telegram 下载与大文件 CDN，走便宜低倍率节点；精确规则先于后续宽泛个人规则
+  "DOMAIN-SUFFIX,telegram-cdn.org,📥 下载分流",
+  "DOMAIN-SUFFIX,cdn.telegram.org,📥 下载分流",
+  "DOMAIN-SUFFIX,telegramdownload.com,📥 下载分流",
+  "DOMAIN-SUFFIX,desktop.telegram.org,📥 下载分流",
+  "DOMAIN-SUFFIX,updates.tdesktop.com,📥 下载分流",
+  // Telegram 核心信令与日常聊天，保留裸IP访问规则
   "DOMAIN-SUFFIX,t.me,🌎 个人规则",
   "DOMAIN-SUFFIX,tdesktop.com,🌎 个人规则",
   "DOMAIN-SUFFIX,telegra.ph,🌎 个人规则",

@@ -66,9 +66,31 @@ const ANTHROPIC_RULES = [
   "DOMAIN,anthropic.com.cdn.cloudflare.net,🔒 Claude",
   "DOMAIN,cdn.usefathom.com,🔒 Claude",
   "DOMAIN,anthropic-com.ghost.io,🔒 Claude",
+  // 两平台共享的验证、遥测、客服、鉴权与支付风控域名统一收口至 Claude 固定新加坡出口，
+  // 避免其它组手动切换或走美国/默认组造成遥测与主站出口撕裂。
+  "DOMAIN,challenges.cloudflare.com,🔒 Claude",
   "DOMAIN-SUFFIX,statsigapi.net,🔒 Claude",
+  "DOMAIN-SUFFIX,statsig.com,🔒 Claude",
+  "DOMAIN-SUFFIX,statsig.org,🔒 Claude",
+  "DOMAIN-SUFFIX,featuregates.org,🔒 Claude",
+  "DOMAIN-SUFFIX,featureassets.org,🔒 Claude",
+  "DOMAIN-SUFFIX,prodregistryv2.org,🔒 Claude",
   "DOMAIN,browser-intake-us5-datadoghq.com,🔒 Claude",
-  "DOMAIN,http-intake.logs.us5.datadoghq.com,🔒 Claude",
+  "DOMAIN-SUFFIX,browser-intake-datadoghq.com,🔒 Claude",
+  "DOMAIN-SUFFIX,datadoghq.com,🔒 Claude",
+  "DOMAIN-SUFFIX,sentry.io,🔒 Claude",
+  "DOMAIN-SUFFIX,segment.io,🔒 Claude",
+  "DOMAIN-SUFFIX,segment.com,🔒 Claude",
+  "DOMAIN-SUFFIX,intercom.io,🔒 Claude",
+  "DOMAIN-SUFFIX,intercomcdn.com,🔒 Claude",
+  "DOMAIN-SUFFIX,workos.com,🔒 Claude",
+  "DOMAIN-SUFFIX,workoscdn.com,🔒 Claude",
+  "DOMAIN,workos.imgix.net,🔒 Claude",
+  "DOMAIN-SUFFIX,auth0.com,🔒 Claude",
+  "DOMAIN-SUFFIX,ct.sendgrid.net,🔒 Claude",
+  "DOMAIN-SUFFIX,stripe.com,🔒 Claude",
+  "DOMAIN-SUFFIX,stripe.network,🔒 Claude",
+  "DOMAIN-SUFFIX,stripecdn.com,🔒 Claude",
   "IP-CIDR,160.79.104.0/21,🔒 Claude,no-resolve",
   "IP-CIDR6,2607:6bc0::/32,🔒 Claude,no-resolve",
   "DOMAIN-KEYWORD,anthropic,🔒 Claude",
@@ -100,8 +122,6 @@ const OPENAI_RULES = [
   "DOMAIN-SUFFIX,oaistatsig.com,🔒 ChatGPT",
   "DOMAIN-SUFFIX,openaimerge.com,🔒 ChatGPT",
   "DOMAIN-SUFFIX,crixet.com,🔒 ChatGPT",
-  "DOMAIN-SUFFIX,featuregates.org,🔒 ChatGPT",
-  "DOMAIN-SUFFIX,statsig.com,🔒 ChatGPT",
   "DOMAIN-SUFFIX,openaiassets.blob.core.windows.net,🔒 ChatGPT",
   "DOMAIN-SUFFIX,openai.com.cdn.cloudflare.net,🔒 ChatGPT",
   "DOMAIN-SUFFIX,openaicom.imgix.net,🔒 ChatGPT",
@@ -115,21 +135,10 @@ const OPENAI_RULES = [
   "DOMAIN-SUFFIX,chatgpt.livekit.cloud,🔒 ChatGPT",
   "DOMAIN-SUFFIX,host.livekit.cloud,🔒 ChatGPT",
   "DOMAIN-SUFFIX,turn.livekit.cloud,🔒 ChatGPT",
-  "DOMAIN-SUFFIX,browser-intake-datadoghq.com,🔒 ChatGPT",
   "DOMAIN-KEYWORD,openai,🔒 ChatGPT",
   "DOMAIN-KEYWORD,chatgpt,🔒 ChatGPT",
 ];
 const US_RULES = [
-  "DOMAIN-SUFFIX,auth0.com,💲 美国规则",
-  // 两平台共享的验证域名保持 Claude 固定出口，避免 ChatGPT 手动选项牵动 Claude。
-  "DOMAIN,challenges.cloudflare.com,🔒 Claude",
-  "DOMAIN-SUFFIX,workos.com,💲 美国规则",
-  "DOMAIN-SUFFIX,workoscdn.com,💲 美国规则",
-  "DOMAIN-SUFFIX,intercom.io,💲 美国规则",
-  "DOMAIN-SUFFIX,intercomcdn.com,💲 美国规则",
-  "DOMAIN-SUFFIX,sentry.io,💲 美国规则",
-  "DOMAIN,rum.browser-intake-datadoghq.com,💲 美国规则",
-  "DOMAIN-SUFFIX,ct.sendgrid.net,💲 美国规则",
   "DOMAIN-SUFFIX,reddit.com,💲 美国规则",
   "DOMAIN-SUFFIX,redd.it,💲 美国规则",
   "DOMAIN-SUFFIX,redditstatic.com,💲 美国规则",
@@ -152,9 +161,7 @@ const US_RULES = [
   "DOMAIN-SUFFIX,twittercommunity.com,💲 美国规则",
   "DOMAIN-SUFFIX,x.ai,💲 美国规则",
   "DOMAIN-SUFFIX,grok.com,💲 美国规则",
-  "DOMAIN-SUFFIX,ippure.com,💲 美国规则",
-  "DOMAIN,js.stripe.com,💲 美国规则",
-  "DOMAIN,workos.imgix.net,💲 美国规则"
+  "DOMAIN-SUFFIX,ippure.com,💲 美国规则"
 ];
 const AI_RULES = [...DEEPSEEK_RULES, ...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
 
@@ -775,6 +782,34 @@ const DNS_SETTINGS = {
   }
 };
 
+// 域名嗅探：在 redir-host 或客户端缓存真实 IP 直连时，对纯 IP 的 80/443/8443 连接嗅探
+// TLS SNI / HTTP Host 以命中域名规则，避免 OpenClash 重启后纯 IP 漏进 MATCH 默认组。
+const SNIFFER_SETTINGS = {
+  "enable": true,
+  "override-destination": false,
+  "force-dns-mapping": true,
+  "parse-pure-ip": true,
+  "sniff": {
+    "HTTP": {
+      "ports": [80, "8080-8880"],
+      "override-destination": false
+    },
+    "TLS": {
+      "ports": [443, 8443]
+    },
+    "QUIC": {
+      "ports": [443, 8443]
+    }
+  },
+  "skip-domain": [
+    "Mijia Cloud",
+    "dlg.io.mi.com",
+    "+.oray.com",
+    "+.sunlogin.net",
+    "+.push.apple.com"
+  ]
+};
+
 // 七、节点与分组。每次main都创建全新数组，多次调用不叠加旧节点。
 const US_PATTERN = /美国|美國|🇺🇸|🇺🇲|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|纽约|紐約|洛杉磯|矽谷|United States|(?:^|[^a-z])USA?(?:[^a-z]|$)|Los Angeles|San Jose|Santa Clara|Seattle|Chicago|New York|Dallas|Portland|Oregon|Phoenix|Fremont|Silicon Valley|Las Vegas/i;
 // 地区只用于筛选用途候选，不再生成同名的地区选择组。
@@ -809,6 +844,7 @@ function main(config) {
   // 不抢FlClash自己的端口、IPv6、TUN开关设置。
   config.dns = clone(DNS_SETTINGS);
   config.dns["nameserver-policy"]["+.ts.net"] = ["100.100.100.100"];
+  config.sniffer = clone(SNIFFER_SETTINGS);
 
   const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME && p.name !== IPROYAL_PROXY_NAME);
   const nodes = sourceProxies.filter(p => !["direct","reject","reject-drop","compatible"].includes(String(p.type || "").toLowerCase()))

@@ -339,11 +339,11 @@ const MY_CUSTOM_RULES = [
   // Cline固定香港
   "DOMAIN-SUFFIX,cline.bot,🇭🇰 香港规则",
   // 大文件走下载分流，HuggingFace网页和登录仍走个人代理
-  "DOMAIN-SUFFIX,hf.co,📥 下载分流",
-  "DOMAIN-SUFFIX,cdn-lfs.huggingface.co,📥 下载分流",
-  "DOMAIN-SUFFIX,cdn-lfs-us-1.huggingface.co,📥 下载分流",
-  "DOMAIN-SUFFIX,cdn-lfs-eu-1.huggingface.co,📥 下载分流",
-  "DOMAIN-SUFFIX,prompthero.com,📥 下载分流",
+  "DOMAIN-SUFFIX,hf.co,📥 下载手动",
+  "DOMAIN-SUFFIX,cdn-lfs.huggingface.co,📥 下载手动",
+  "DOMAIN-SUFFIX,cdn-lfs-us-1.huggingface.co,📥 下载手动",
+  "DOMAIN-SUFFIX,cdn-lfs-eu-1.huggingface.co,📥 下载手动",
+  "DOMAIN-SUFFIX,prompthero.com,📥 下载手动",
   // 恢复已实测可直连的精确 Google 国内服务，不搬回整个 GoogleCN 集。
   "DOMAIN,dl.google.com,DIRECT",
   "DOMAIN,tools.google.com,DIRECT",
@@ -438,11 +438,11 @@ const MY_CUSTOM_RULES = [
   // 上面的 dl.google.com、Play 大陆 CDN 直连仍在前，优先于这里。
   ...GOOGLE_RULES,
   // Telegram 下载与大文件 CDN，走便宜低倍率节点；精确规则先于后续宽泛个人规则
-  "DOMAIN-SUFFIX,telegram-cdn.org,📥 下载分流",
-  "DOMAIN-SUFFIX,cdn.telegram.org,📥 下载分流",
-  "DOMAIN-SUFFIX,telegramdownload.com,📥 下载分流",
-  "DOMAIN-SUFFIX,desktop.telegram.org,📥 下载分流",
-  "DOMAIN-SUFFIX,updates.tdesktop.com,📥 下载分流",
+  "DOMAIN-SUFFIX,telegram-cdn.org,📥 下载手动",
+  "DOMAIN-SUFFIX,cdn.telegram.org,📥 下载手动",
+  "DOMAIN-SUFFIX,telegramdownload.com,📥 下载手动",
+  "DOMAIN-SUFFIX,desktop.telegram.org,📥 下载手动",
+  "DOMAIN-SUFFIX,updates.tdesktop.com,📥 下载手动",
   // Telegram 核心信令与日常聊天，保留裸IP访问规则
   "DOMAIN-SUFFIX,t.me,🌎 个人规则",
   "DOMAIN-SUFFIX,tdesktop.com,🌎 个人规则",
@@ -463,9 +463,9 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,gpsoft.com.au,🌎 个人规则",
   "DOMAIN-SUFFIX,runninghub.ai,🌎 个人规则",
   // GitHub Release / 大文件资产走低倍率下载分流；网页、API 与 raw 仍走香港固定。
-  "DOMAIN,release-assets.githubusercontent.com,📥 下载分流",
-  "DOMAIN,objects.githubusercontent.com,📥 下载分流",
-  "DOMAIN,codeload.github.com,📥 下载分流",
+  "DOMAIN,release-assets.githubusercontent.com,📥 下载手动",
+  "DOMAIN,objects.githubusercontent.com,📥 下载手动",
+  "DOMAIN,codeload.github.com,📥 下载手动",
   "DOMAIN-SUFFIX,github.com,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,github.io,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,githubusercontent.com,🇭🇰 香港固定",
@@ -476,10 +476,10 @@ const MY_CUSTOM_RULES = [
   // 国内包镜像显式直连；兜底直连官方源的请求改走低倍率下载分流，避免直连丢包卡顿。
   "DOMAIN-SUFFIX,npmmirror.com,DIRECT",
   "DOMAIN-SUFFIX,tuna.tsinghua.edu.cn,DIRECT",
-  "DOMAIN-SUFFIX,registry.npmjs.org,📥 下载分流",
-  "DOMAIN-SUFFIX,pypi.org,📥 下载分流",
-  "DOMAIN-SUFFIX,pythonhosted.org,📥 下载分流",
-  "DOMAIN-SUFFIX,astral.sh,📥 下载分流",
+  "DOMAIN-SUFFIX,registry.npmjs.org,📥 下载手动",
+  "DOMAIN-SUFFIX,pypi.org,📥 下载手动",
+  "DOMAIN-SUFFIX,pythonhosted.org,📥 下载手动",
+  "DOMAIN-SUFFIX,astral.sh,📥 下载手动",
   "DOMAIN-SUFFIX,v2ex.com,🌎 个人规则",
   "DOMAIN,qiuqiutoken.com,🌎 个人规则",
   "DOMAIN,go.apimart.ai,🌎 个人规则",
@@ -891,7 +891,7 @@ function main(config) {
     .filter(name => !/免费|免費|到期|剩余|有效期|官网|流量[:：]/.test(name));
   downloads.sort((a,b) => (isNaN(rateOf(a))?1:rateOf(a)) - (isNaN(rateOf(b))?1:rateOf(b)));
 
-  // 下载分流：按倍率从低到高自动容灾选可用节点（先 x0.01，再 x0.8 等 <1x 廉价节点，最后日/港 1x 兜底，不碰 >1x 高倍率及 IPRoyal 前置）。
+  // 下载分流（方案A：仅2组）：按倍率升序扁平放入 fallback（0.01x -> 0.8x -> 日/港1x兜底），排除 >1x 高倍率及 IPRoyal 前置。
   const effectiveRate = (name) => { const r = rateOf(name); return isNaN(r) ? 1 : r; };
   const downloadPool = names.filter(name => name !== IPROYAL_FRONT_NODE && !/免费|免費|到期|剩余|有效期|官网|重置|套餐|流量[:：]/.test(name));
   const ultraCheap = downloadPool.filter(name => effectiveRate(name) < 0.5)
@@ -900,41 +900,19 @@ function main(config) {
     .sort((a,b) => effectiveRate(a) - effectiveRate(b));
   const normalJpHk = ieplFirst(downloadPool.filter(name => effectiveRate(name) === 1 && (JP_PATTERN.test(name) || HK_PATTERN.test(name))));
 
-  const downloadTiers = [];
-  const downloadSubGroups = [];
-  const downloadTestUrl = "https://github.com/robots.txt";
-  const addDownloadTier = (groupName, tierNodes) => {
-    if (!tierNodes.length) return;
-    if (tierNodes.length === 1) {
-      downloadTiers.push(tierNodes[0]);
-      return;
-    }
-    downloadSubGroups.push({
-      name: groupName,
-      type: "url-test",
-      url: downloadTestUrl,
-      interval: 300,
-      tolerance: 50,
-      proxies: nonempty(tierNodes)
-    });
-    downloadTiers.push(groupName);
-  };
-  addDownloadTier("📥 下载-极低倍率", ultraCheap);
-  addDownloadTier("📥 下载-低倍率", cheapDiscount);
-  addDownloadTier("📥 下载-常规兜底", normalJpHk);
-  const downloadAutoGroup = {
-    name: "📥 下载自动",
-    type: "fallback",
-    url: downloadTestUrl,
-    interval: 300,
-    proxies: nonempty(downloadTiers)
-  };
-  const downloadManualList = unique([
+  const downloadOrderedNodes = unique([
     ...ultraCheap,
     ...cheapDiscount,
     ...downloads,
     ...normalJpHk
   ]);
+  const downloadAutoGroup = {
+    name: "📥 下载自动",
+    type: "fallback",
+    url: "https://github.com/robots.txt",
+    interval: 300,
+    proxies: nonempty(downloadOrderedNodes)
+  };
 
   // 保留常用的两套控制：个人网站跟手动切换，其他流量由默认代理决定。
   // 新 AI 组首项保留原出口，不引入自动换节点。
@@ -955,9 +933,8 @@ function main(config) {
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),
     selected("🇸🇬 WorkBuddy",["REJECT",...sg]),
-    selected("📥 下载分流",["📥 下载自动",...downloadManualList,"🌎 个人规则","🚀 手动切换"]),
+    selected("📥 下载手动",["📥 下载自动","🚀 手动切换","🌎 个人规则",...downloadOrderedNodes]),
     downloadAutoGroup,
-    ...downloadSubGroups,
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),
     selected("📢 谷歌FCM",["DIRECT","🌐 默认代理","🚀 手动切换",...us]),
     selected("🛰️ Tailnet",[TS_PROXY_NAME,"DIRECT"]),

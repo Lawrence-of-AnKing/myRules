@@ -72,10 +72,11 @@ async function main() {
     }
   }
   const fixedAI = result['proxy-groups'].find(item => item.name === '🔒 Claude');
-  const fixedNode = result.proxies.find(item => item.name === 'IPRoyal 新加坡固定');
-  // 前置节点以 reWrite.js 的 IPROYAL_FRONT_NODE 常量为唯一来源，避免两处不同步。
+  // 落地节点名与前置节点均以 reWrite.js 常量为唯一来源，避免两处不同步。
+  const declaredName = vm.runInContext('IPROYAL_PROXY_NAME', context);
   const declaredFront = vm.runInContext('IPROYAL_FRONT_NODE', context);
-  if (fixedAI?.type !== 'select' || JSON.stringify(fixedAI.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT']) ||
+  const fixedNode = result.proxies.find(item => item.name === declaredName);
+  if (fixedAI?.type !== 'select' || JSON.stringify(fixedAI.proxies) !== JSON.stringify([declaredName, 'REJECT']) ||
       fixedNode?.type !== 'socks5' || fixedNode['dialer-proxy'] !== declaredFront) {
     throw new Error('AI egress must contain only the explicitly approved private proxy and REJECT');
   }
@@ -87,7 +88,7 @@ async function main() {
   }
   for (const name of [...aiNames.slice(1, 3), '🇸🇬 谷歌固定']) {
     const group = result['proxy-groups'].find(item => item.name === name);
-    if (group?.type !== 'select' || JSON.stringify(group.proxies) !== JSON.stringify(['IPRoyal 新加坡固定', 'REJECT', '🚀 手动切换'])) {
+    if (group?.type !== 'select' || JSON.stringify(group.proxies) !== JSON.stringify([declaredName, 'REJECT', '🚀 手动切换'])) {
       throw new Error('ChatGPT, Gemini and Google must default to fixed Singapore and offer the shared manual selector');
     }
   }

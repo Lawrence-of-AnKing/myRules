@@ -1,6 +1,6 @@
 // FlClash 共用覆写：按用途选出口；不去广告；国内/明确例外直连，其余默认代理。
 // 用法：把本文件内容作为订阅的“脚本覆写”。普通文件不是机场订阅，也不能作为YAML导入。
-// 公开脚本不含节点密码；机场订阅和 IPRoyal 凭据仅在构建时从 GitHub Secrets 注入。
+// 公开脚本不含节点密码；机场订阅和新加坡固定落地（Webshare）凭据仅在构建时从 GitHub Secrets 注入。
 //
 // 日常使用：
 // 1. “🌎 个人规则”管理自己收录的网站；默认跟随“🚀 手动切换”，限流时在后者换节点。
@@ -24,7 +24,7 @@
 const TS_PROXY_NAME = "tailnet";
 // 前置与最终出口均显式固定；不按地区排序或测速自动换节点。
 const IPROYAL_FRONT_NODE = "🇭🇰 香港S02 | IEPL";
-const IPROYAL_PROXY_NAME = "IPRoyal 新加坡固定";
+const IPROYAL_PROXY_NAME = "Webshare 新加坡固定";
 const AI_FIXED_GROUP = "🔒 Claude";
 const CHATGPT_GROUP = "🔒 ChatGPT";
 const GEMINI_GROUP = "♊ Gemini";
@@ -66,9 +66,13 @@ const ANTHROPIC_RULES = [
   "DOMAIN,anthropic.com.cdn.cloudflare.net,🔒 Claude",
   "DOMAIN,cdn.usefathom.com,🔒 Claude",
   "DOMAIN,anthropic-com.ghost.io,🔒 Claude",
-  // 两平台共享的验证、遥测、客服、鉴权与支付风控域名统一收口至 Claude 固定新加坡出口，
-  // 避免其它组手动切换或走美国/默认组造成遥测与主站出口撕裂。
+  // 共享验证、遥测、客服与鉴权域名统一收口至固定新加坡出口，
+  // 并将强 Turnstile 校验站与测 IP 站（ippure/ping0）同组对齐，避免主站与验证 IP 分裂及机场 SNI 审计拦截。
   "DOMAIN,challenges.cloudflare.com,🔒 Claude",
+  "DOMAIN-SUFFIX,ippure.com,🔒 Claude",
+  "DOMAIN-SUFFIX,ping0.cc,🔒 Claude",
+  "DOMAIN-SUFFIX,linux.do,🔒 Claude",
+  "DOMAIN-SUFFIX,nodeseek.com,🔒 Claude",
   "DOMAIN-SUFFIX,statsigapi.net,🔒 Claude",
   "DOMAIN-SUFFIX,statsig.com,🔒 Claude",
   "DOMAIN-SUFFIX,statsig.org,🔒 Claude",
@@ -88,9 +92,6 @@ const ANTHROPIC_RULES = [
   "DOMAIN,workos.imgix.net,🔒 Claude",
   "DOMAIN-SUFFIX,auth0.com,🔒 Claude",
   "DOMAIN-SUFFIX,ct.sendgrid.net,🔒 Claude",
-  "DOMAIN-SUFFIX,stripe.com,🔒 Claude",
-  "DOMAIN-SUFFIX,stripe.network,🔒 Claude",
-  "DOMAIN-SUFFIX,stripecdn.com,🔒 Claude",
   "IP-CIDR,160.79.104.0/21,🔒 Claude,no-resolve",
   "IP-CIDR6,2607:6bc0::/32,🔒 Claude,no-resolve",
   "DOMAIN-KEYWORD,anthropic,🔒 Claude",
@@ -160,8 +161,7 @@ const US_RULES = [
   "DOMAIN-SUFFIX,twitterflightschool.com,💲 美国规则",
   "DOMAIN-SUFFIX,twittercommunity.com,💲 美国规则",
   "DOMAIN-SUFFIX,x.ai,💲 美国规则",
-  "DOMAIN-SUFFIX,grok.com,💲 美国规则",
-  "DOMAIN-SUFFIX,ippure.com,💲 美国规则"
+  "DOMAIN-SUFFIX,grok.com,💲 美国规则"
 ];
 const AI_RULES = [...DEEPSEEK_RULES, ...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
 
@@ -400,9 +400,12 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,davidrumsey.com,🌎 个人规则",
   "DOMAIN-SUFFIX,z-library.sk,🌎 个人规则",
   "DOMAIN-SUFFIX,play.hbomax.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,linux.do,🌎 个人规则",
   "DOMAIN-SUFFIX,raindrop.io,🌎 个人规则",
-  "DOMAIN-SUFFIX,nodeseek.com,🌎 个人规则",
+  // Webshare 服务端规则集直接拒绝 *.stripe.com（SOCKS5 0x02）；
+  // 三条 Stripe 域名同组走普通代理，避免付款页打不开或 Stripe Radar 跨 IP 风控。
+  "DOMAIN-SUFFIX,stripe.com,🌎 个人规则",
+  "DOMAIN-SUFFIX,stripe.network,🌎 个人规则",
+  "DOMAIN-SUFFIX,stripecdn.com,🌎 个人规则",
   "DOMAIN-SUFFIX,nyaa.si,🌎 个人规则",
   "DOMAIN-SUFFIX,seedhub.cc,🌎 个人规则",
   "DOMAIN-SUFFIX,chaospace.xyz,🌎 个人规则",
@@ -857,7 +860,7 @@ function main(config) {
   config.dns["nameserver-policy"]["+.ts.net"] = ["100.100.100.100"];
   config.sniffer = clone(SNIFFER_SETTINGS);
 
-  const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME && p.name !== IPROYAL_PROXY_NAME);
+  const sourceProxies = (config.proxies || []).filter(p => p && p.name && p.name !== TS_PROXY_NAME && p.name !== IPROYAL_PROXY_NAME && p.name !== "IPRoyal 新加坡固定");
   const nodes = sourceProxies.filter(p => !["direct","reject","reject-drop","compatible"].includes(String(p.type || "").toLowerCase()))
     .filter(p => !/剩余|到期|有效期|官网|重置|套餐|流量[:：]/.test(p.name));
   const names = unique(nodes.map(p => p.name));

@@ -462,6 +462,10 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,dopus.com,🌎 个人规则",
   "DOMAIN-SUFFIX,gpsoft.com.au,🌎 个人规则",
   "DOMAIN-SUFFIX,runninghub.ai,🌎 个人规则",
+  // GitHub Release / 大文件资产走低倍率下载分流；网页、API 与 raw 仍走香港固定。
+  "DOMAIN,release-assets.githubusercontent.com,📥 下载分流",
+  "DOMAIN,objects.githubusercontent.com,📥 下载分流",
+  "DOMAIN,codeload.github.com,📥 下载分流",
   "DOMAIN-SUFFIX,github.com,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,github.io,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,githubusercontent.com,🇭🇰 香港固定",
@@ -469,6 +473,13 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,ghcr.io,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,githubstatus.com,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,githubapp.com,🇭🇰 香港固定",
+  // 国内包镜像显式直连；兜底直连官方源的请求改走低倍率下载分流，避免直连丢包卡顿。
+  "DOMAIN-SUFFIX,npmmirror.com,DIRECT",
+  "DOMAIN-SUFFIX,tuna.tsinghua.edu.cn,DIRECT",
+  "DOMAIN-SUFFIX,registry.npmjs.org,📥 下载分流",
+  "DOMAIN-SUFFIX,pypi.org,📥 下载分流",
+  "DOMAIN-SUFFIX,pythonhosted.org,📥 下载分流",
+  "DOMAIN-SUFFIX,astral.sh,📥 下载分流",
   "DOMAIN-SUFFIX,v2ex.com,🌎 个人规则",
   "DOMAIN,qiuqiutoken.com,🌎 个人规则",
   "DOMAIN,go.apimart.ai,🌎 个人规则",
@@ -566,7 +577,6 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,aqwx.bosafe.com,DIRECT",
   "DOMAIN-SUFFIX,sso.openxlab.org.cn,DIRECT",
   "DOMAIN-SUFFIX,topazlabs.com,DIRECT",
-  "DOMAIN-SUFFIX,registry.npmjs.org,DIRECT",
   "DOMAIN-SUFFIX,ikhub.net,DIRECT",
   // 你已指定直连的中转站
   "DOMAIN,api.qiuqiutoken.net,DIRECT",
@@ -816,6 +826,7 @@ const US_PATTERN = /美国|美國|🇺🇸|🇺🇲|波特兰|达拉斯|俄勒�
 const HK_PATTERN = /香港|🇭🇰|(?:^|[^a-z])HK(?:[^a-z]|$)|Hong Kong/i;
 const SG_PATTERN = /新加坡|狮城|獅城|🇸🇬|(?:^|[^a-z])SG(?:[^a-z]|$)|Singapore/i;
 const TW_PATTERN = /台湾|台灣|臺灣|🇨🇳|🇹🇼|(?:^|[^a-z])TW(?:[^a-z]|$)|Taiwan|Taipei|台北/i;
+const JP_PATTERN = /日本|🇯🇵|(?:^|[^a-z])JP(?:[^a-z]|$)|Japan|Tokyo|Osaka|东京|大阪/i;
 // 候选同时排除两家交易所各自受限的地区：美/加/港/新/日/印/英等都不进候选。
 const EXCHANGE_REGION_PATTERN = /韩国|韓國|德国|德國|法国|法國|澳大利亚|澳洲|土耳其|🇰🇷|🇩🇪|🇫🇷|🇦🇺|🇹🇷/i;
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
@@ -880,6 +891,51 @@ function main(config) {
     .filter(name => !/免费|免費|到期|剩余|有效期|官网|流量[:：]/.test(name));
   downloads.sort((a,b) => (isNaN(rateOf(a))?1:rateOf(a)) - (isNaN(rateOf(b))?1:rateOf(b)));
 
+  // 下载分流：按倍率从低到高自动容灾选可用节点（先 x0.01，再 x0.8 等 <1x 廉价节点，最后日/港 1x 兜底，不碰 >1x 高倍率及 IPRoyal 前置）。
+  const effectiveRate = (name) => { const r = rateOf(name); return isNaN(r) ? 1 : r; };
+  const downloadPool = names.filter(name => name !== IPROYAL_FRONT_NODE && !/免费|免費|到期|剩余|有效期|官网|重置|套餐|流量[:：]/.test(name));
+  const ultraCheap = downloadPool.filter(name => effectiveRate(name) < 0.5)
+    .sort((a,b) => effectiveRate(a) - effectiveRate(b));
+  const cheapDiscount = downloadPool.filter(name => effectiveRate(name) >= 0.5 && effectiveRate(name) < 1)
+    .sort((a,b) => effectiveRate(a) - effectiveRate(b));
+  const normalJpHk = ieplFirst(downloadPool.filter(name => effectiveRate(name) === 1 && (JP_PATTERN.test(name) || HK_PATTERN.test(name))));
+
+  const downloadTiers = [];
+  const downloadSubGroups = [];
+  const downloadTestUrl = "https://github.com/robots.txt";
+  const addDownloadTier = (groupName, tierNodes) => {
+    if (!tierNodes.length) return;
+    if (tierNodes.length === 1) {
+      downloadTiers.push(tierNodes[0]);
+      return;
+    }
+    downloadSubGroups.push({
+      name: groupName,
+      type: "url-test",
+      url: downloadTestUrl,
+      interval: 300,
+      tolerance: 50,
+      proxies: nonempty(tierNodes)
+    });
+    downloadTiers.push(groupName);
+  };
+  addDownloadTier("📥 下载-极低倍率", ultraCheap);
+  addDownloadTier("📥 下载-低倍率", cheapDiscount);
+  addDownloadTier("📥 下载-常规兜底", normalJpHk);
+  const downloadAutoGroup = {
+    name: "📥 下载自动",
+    type: "fallback",
+    url: downloadTestUrl,
+    interval: 300,
+    proxies: nonempty(downloadTiers)
+  };
+  const downloadManualList = unique([
+    ...ultraCheap,
+    ...cheapDiscount,
+    ...downloads,
+    ...normalJpHk
+  ]);
+
   // 保留常用的两套控制：个人网站跟手动切换，其他流量由默认代理决定。
   // 新 AI 组首项保留原出口，不引入自动换节点。
   const groups = [
@@ -899,7 +955,9 @@ function main(config) {
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),
     selected("🇸🇬 WorkBuddy",["REJECT",...sg]),
-    selected("📥 下载分流",[...downloads,"🌎 个人规则","🚀 手动切换"]),
+    selected("📥 下载分流",["📥 下载自动",...downloadManualList,"🌎 个人规则","🚀 手动切换"]),
+    downloadAutoGroup,
+    ...downloadSubGroups,
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),
     selected("📢 谷歌FCM",["DIRECT","🌐 默认代理","🚀 手动切换",...us]),
     selected("🛰️ Tailnet",[TS_PROXY_NAME,"DIRECT"]),

@@ -14,7 +14,7 @@
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
 // 7. 已移除 AI 专用入口（原 127.0.0.1:17907 / 17904）：AI 域名改由规则分流
 //    （🔒 Claude、🔒 ChatGPT、🇭🇰 香港规则等），客户端不设代理即由 TUN 或上级路由接管。
-//    17901/17902 的 WorkBuddy 槽位保留。
+//    17901/17902 的 WorkBuddy 槽位保留；17903 为英国出口，17904-17906 为优选日本 IEPL 出口。
 //
 // 个人直连/全球直连不再占选择组，已确认的直连规则直接指向DIRECT；基础MRS仍自动更新。
 // 保留现有DNS、TUN、听书、坚果云和下载例外，不修改设备已有端口、IPv6或TUN开关。
@@ -830,6 +830,7 @@ const HK_PATTERN = /香港|🇭🇰|(?:^|[^a-z])HK(?:[^a-z]|$)|Hong Kong/i;
 const SG_PATTERN = /新加坡|狮城|獅城|🇸🇬|(?:^|[^a-z])SG(?:[^a-z]|$)|Singapore/i;
 const TW_PATTERN = /台湾|台灣|臺灣|🇨🇳|🇹🇼|(?:^|[^a-z])TW(?:[^a-z]|$)|Taiwan|Taipei|台北/i;
 const JP_PATTERN = /日本|🇯🇵|(?:^|[^a-z])JP(?:[^a-z]|$)|Japan|Tokyo|Osaka|东京|大阪/i;
+const UK_PATTERN = /英国|英國|🇬🇧|(?:^|[^a-z])UK(?:[^a-z]|$)|United Kingdom|London|伦敦/i;
 // 候选同时排除两家交易所各自受限的地区：美/加/港/新/日/印/英等都不进候选。
 const EXCHANGE_REGION_PATTERN = /韩国|韓國|德国|德國|法国|法國|澳大利亚|澳洲|土耳其|🇰🇷|🇩🇪|🇫🇷|🇦🇺|🇹🇷/i;
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
@@ -887,6 +888,10 @@ function main(config) {
   const hkIepl = hk.filter(name => /IEPL/i.test(name) && name !== IPROYAL_FRONT_NODE);
   const hkDeepSeek = hkIepl.length ? hkIepl : hk;
   const sg = ieplFirst(fixedCandidates(names, SG_PATTERN));
+  const uk = ieplFirst(fixedCandidates(names, UK_PATTERN));
+  const jpPreferredOrder = [/日本S10\s*\|\s*IEPL/i, /日本S09\s*\|\s*IEPL/i, /日本S07\s*\|\s*IEPL/i, /日本S11\s*\|\s*IEPL/i];
+  const jpRank = (name) => { const idx = jpPreferredOrder.findIndex(re => re.test(name)); return idx === -1 ? 99 : idx; };
+  const jp = [...ieplFirst(fixedCandidates(names, JP_PATTERN))].sort((a, b) => jpRank(a) - jpRank(b));
   // 台湾优先，其后按备用地区补位；候选为空时由 nonempty 回落到 REJECT。
   const exchange = [...ieplFirst(fixedCandidates(names, TW_PATTERN)), ...fixedCandidates(names, EXCHANGE_REGION_PATTERN)]
     .filter((name, i, all) => all.indexOf(name) === i);
@@ -952,7 +957,11 @@ function main(config) {
   // 节点不足时第二端口拒绝连接，不假装两个账号有独立出口。
   config.listeners = [
     {name:"wb-slot-1", type:"mixed", port:17901, listen:"127.0.0.1", proxy:sg[0] || "REJECT"},
-    {name:"wb-slot-2", type:"mixed", port:17902, listen:"127.0.0.1", proxy:sg[1] || "REJECT"}
+    {name:"wb-slot-2", type:"mixed", port:17902, listen:"127.0.0.1", proxy:sg[1] || "REJECT"},
+    {name:"uk-slot-1", type:"mixed", port:17903, listen:"127.0.0.1", proxy:uk[0] || "REJECT"},
+    {name:"jp-slot-1", type:"mixed", port:17904, listen:"127.0.0.1", proxy:jp[0] || "REJECT"},
+    {name:"jp-slot-2", type:"mixed", port:17905, listen:"127.0.0.1", proxy:jp[1] || "REJECT"},
+    {name:"jp-slot-3", type:"mixed", port:17906, listen:"127.0.0.1", proxy:jp[2] || "REJECT"}
   ];
   config.rules = [...TAILSCALE_RULES, ...LOCAL_RULES, ...AI_RULES, ...PUSH_RULES, ...ONEDRIVE_RULES, ...APPLE_DIRECT_RULES, ...MICROSOFT_DIRECT_RULES, ...UPDATE_DIRECT_RULES, ...MY_CUSTOM_RULES, ...BASE_RULES];
   if (config.tun) config.tun = Object.assign({},config.tun,TUN_TAILSCALE_SETTINGS);

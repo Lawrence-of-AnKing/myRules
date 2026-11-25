@@ -8,7 +8,7 @@
 // 3. 不再生成美国/香港/日本等地区节点组；国家只用于后台筛选固定用途的候选节点。
 // 4. AI 分组连续排列：🔒 Claude → 🔒 ChatGPT → ♊ Gemini → 🐳 DeepSeek。
 //    Claude 只允许新加坡固定出口和 REJECT；ChatGPT/Gemini 默认仍是新加坡固定出口，
-//    ChatGPT/Gemini/谷歌固定可选“🚀 手动切换”并跟随它，不平铺机场节点，不挂自动组。
+//    ChatGPT/Gemini/谷歌固定/X 默认仍是新加坡固定出口，可选“🚀 手动切换”并跟随它，不平铺机场节点，不挂自动组。
 //    DeepSeek 仍用原来的香港 IEPL 候选。重命名后旧组的本机选择不会迁移，请核对一次。
 // 5. “☁️ 云盘服务”仍是PikPak/CloudDrive，不是OneDrive；115保留直连。
 // 6. “🛰️ Tailnet”：安卓选tailnet；装有官方Tailscale的电脑选DIRECT，各端选一次即可。
@@ -23,12 +23,13 @@
 // 一、Tailscale和内网。Tailnet必须先于一般private规则。
 const TS_PROXY_NAME = "tailnet";
 // 前置与最终出口均显式固定；不按地区排序或测速自动换节点。
-const IPROYAL_FRONT_NODE = "🇭🇰 香港S02 | IEPL";
+const IPROYAL_FRONT_NODE = "🇭🇰 香港S10 | IEPL";
 const IPROYAL_PROXY_NAME = "Webshare 新加坡固定";
 const AI_FIXED_GROUP = "🔒 Claude";
 const CHATGPT_GROUP = "🔒 ChatGPT";
 const GEMINI_GROUP = "♊ Gemini";
 const GOOGLE_SG_GROUP = "🇸🇬 谷歌固定";
+const X_GROUP = "𝕏 X / Twitter";
 const US_FIXED_NODE = "🇺🇲 美国S01 | IEPL | x1.5";
 const TS_AUTH_KEY = ""; // 不在同步脚本里放密钥。
 // 新设备：日志级别info → 对tailnet点测速 → 日志搜索To start → 打开授权链接批准。
@@ -146,24 +147,26 @@ const US_RULES = [
   "DOMAIN-SUFFIX,redditmedia.com,💲 美国规则",
   "DOMAIN-SUFFIX,redditspace.com,💲 美国规则",
   "DOMAIN,reddit.map.fastly.net,💲 美国规则",
-  "DOMAIN-SUFFIX,x.com,💲 美国规则",
-  "DOMAIN-SUFFIX,twitter.com,💲 美国规则",
-  "DOMAIN-SUFFIX,t.co,💲 美国规则",
-  "DOMAIN-SUFFIX,twttr.com,💲 美国规则",
-  "DOMAIN-SUFFIX,twttr.net,💲 美国规则",
-  "DOMAIN-SUFFIX,twitter.jp,💲 美国规则",
-  "DOMAIN-SUFFIX,twimg.com,💲 美国规则",
-  "DOMAIN-SUFFIX,twimg.edgesuite.net,💲 美国规则",
-  "DOMAIN-SUFFIX,twtrcdn.com,💲 美国规则",
-  "DOMAIN-SUFFIX,periscope.tv,💲 美国规则",
-  "DOMAIN-SUFFIX,pscp.tv,💲 美国规则",
-  "DOMAIN-SUFFIX,ads-twitter.com,💲 美国规则",
-  "DOMAIN-SUFFIX,twitterflightschool.com,💲 美国规则",
-  "DOMAIN-SUFFIX,twittercommunity.com,💲 美国规则",
   "DOMAIN-SUFFIX,x.ai,💲 美国规则",
   "DOMAIN-SUFFIX,grok.com,💲 美国规则"
 ];
-const AI_RULES = [...DEEPSEEK_RULES, ...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES];
+const X_RULES = [
+  "DOMAIN-SUFFIX,x.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twitter.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,t.co,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twttr.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twttr.net,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twitter.jp,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twimg.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twimg.edgesuite.net,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twtrcdn.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,periscope.tv,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,pscp.tv,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,ads-twitter.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twitterflightschool.com,𝕏 X / Twitter",
+  "DOMAIN-SUFFIX,twittercommunity.com,𝕏 X / Twitter"
+];
+const AI_RULES = [...DEEPSEEK_RULES, ...ANTHROPIC_RULES, ...OPENAI_RULES, ...US_RULES, ...X_RULES];
 
 // 三、系统服务与OneDrive。用途例外先于宽泛的微软/Apple/CDN规则。
 const APPLE_DIRECT_RULES = [
@@ -939,6 +942,8 @@ function main(config) {
     selected(DEEPSEEK_GROUP,hkDeepSeek),
     // 搜索、YouTube 默认固定出口，也可手动选“🚀 手动切换”联动。
     selected(GOOGLE_SG_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT","🚀 手动切换"]),
+    // X/Twitter 默认固定新加坡落地，也可手动选“🚀 手动切换”联动。
+    selected(X_GROUP,[...(iproyal?[IPROYAL_PROXY_NAME]:[]),"REJECT","🚀 手动切换"]),
     selected("💲 美国规则",["REJECT",...us]),
     selected("🇭🇰 香港固定",["REJECT",...hk]),
     selected("🇭🇰 香港规则",["REJECT",...hkCline]),

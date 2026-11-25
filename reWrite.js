@@ -311,6 +311,8 @@ const MY_CUSTOM_RULES = [
   // OKX：主域 + 自有别名。okex.com / ouyi.cc 当前无解析记录，未收录。
   "DOMAIN-SUFFIX,okx.com,🪙 交易所",
   "DOMAIN-SUFFIX,okx.cab,🪙 交易所",   // 证书 CN=*.okx.cab，与 okx.com 同 IP，OKX 自有别名
+  // 皮卡宝网页端（app.pikabao.com）拒绝大陆/香港/澳门 IP，走手动切换以便选用非港澳节点。
+  "DOMAIN-SUFFIX,pikabao.com,🚀 手动切换",
   // 安徽电信校园平台及同域业务直连，不依赖通用国内域名/IP集兜底。
   "DOMAIN-SUFFIX,anhuitelecom.com,DIRECT",
   // 微信、QQ和腾讯服务直连

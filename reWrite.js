@@ -181,7 +181,6 @@ const APPLE_DIRECT_RULES = [
   "DOMAIN-SUFFIX,apple.news,DIRECT",
   "DOMAIN-SUFFIX,appstore.com,DIRECT",
   "DOMAIN-SUFFIX,cdn-apple.com,DIRECT",
-  "DOMAIN-SUFFIX,crashlytics.com,DIRECT",
   "DOMAIN-SUFFIX,icloud-content.com,DIRECT",
   "DOMAIN-SUFFIX,icloud.com,DIRECT",
   "DOMAIN-SUFFIX,icloud.com.cn,DIRECT",
@@ -248,18 +247,23 @@ const MICROSOFT_DIRECT_RULES = [
 ];
 
 // 四、个人业务例外。保留既有意图，只合并明确重复。
-// Google AI 与登录使用 Gemini 组，其余谷歌服务保留固定新加坡出口。
-// 直连例外（dl.google.com、tools.google.com、Play 大陆 CDN）写在 MY_CUSTOM_RULES 更前面，仍然优先。
+// Google AI 与登录使用 Gemini 组，其余全部谷歌服务（含 Google-CN / FCM / 周边域与纯 IP）
+// 统一收口至固定新加坡出口并封堵 UDP/QUIC，杜绝大陆直连与第一跳香港泄漏导致账号送中。
 const GOOGLE_RULES = [
-  // Gemini / AI Studio 的 QUIC(UDP) 与 ChatGPT 同因：走不通链式第二跳，会从第一跳
-  // 香港出口出去，Google 按出口 IP 判「地区不支持」并跳 available-regions。
-  // 拒绝 UDP 后浏览器回退 TCP，使用 Gemini 组当前选定的出口。
-  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,aistudio.google.com)),REJECT",
-  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,gemini.google.com)),REJECT",
-  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,generativelanguage.googleapis.com)),REJECT",
+  // Google / Gemini / Google-CN 全域禁 UDP(QUIC)：Webshare 新加坡固定为 udp:false + 香港前置，
+  // QUIC(UDP) 走不通链式第二跳会漏到第一跳香港出口；先用规则集全域拦截，再用核心后缀兜底首次冷启动。
+  "AND,((NETWORK,UDP),(RULE-SET,GoogleGemini)),REJECT",
+  "AND,((NETWORK,UDP),(RULE-SET,GoogleDomain)),REJECT",
+  "AND,((NETWORK,UDP),(RULE-SET,GoogleCN)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,google.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,googleapis.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,gstatic.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,googleusercontent.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,youtube.com)),REJECT",
+  "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,google.cn)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,ai.google.dev)),REJECT",
   "AND,((NETWORK,UDP),(DOMAIN-SUFFIX,antigravity.google)),REJECT",
-  // AI 与账号
+  // AI 与账号（精确规则 + 上游 GoogleGemini 规则集，自动覆盖 aicode/antigravity-unleash 等全量 AI 域）
   "DOMAIN,daily-cloudcode-pa.sandbox.googleapis.com,♊ Gemini",
   "DOMAIN,daily-cloudcode-pa.googleapis.com,♊ Gemini",
   "DOMAIN,cloudcode-pa.googleapis.com,♊ Gemini",
@@ -276,16 +280,27 @@ const GOOGLE_RULES = [
   "DOMAIN-SUFFIX,gemini.google.com,♊ Gemini",
   "DOMAIN,accounts.google.com,♊ Gemini",
   "DOMAIN,accounts.googleusercontent.com,♊ Gemini",
-  // 通用服务
+  "RULE-SET,GoogleGemini,♊ Gemini",
+  // 全量 Google 域名与 Google-CN 统一收口固定新加坡（上游每日同步 + 核心后缀冷启动兜底）
+  "RULE-SET,GoogleDomain,🇸🇬 谷歌固定",
+  "RULE-SET,GoogleCN,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,google.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,google.cn,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,google.com.hk,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,google.co.jp,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,gstatic.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,gstatic.cn,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,googleapis.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,googleapis.cn,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,googleusercontent.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,deepmind.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,deepmind.google,🇸🇬 谷歌固定",
-  // YouTube
+  "DOMAIN-SUFFIX,gvt1.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,gvt2.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,pki.goog,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,google.dev,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,withgoogle.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,android.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,chrome.com,🇸🇬 谷歌固定",
+  "DOMAIN-SUFFIX,crashlytics.com,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,youtube.com,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,youtu.be,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,ytimg.com,🇸🇬 谷歌固定",
@@ -349,20 +364,8 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,cdn-lfs-us-1.huggingface.co,📥 下载手动",
   "DOMAIN-SUFFIX,cdn-lfs-eu-1.huggingface.co,📥 下载手动",
   "DOMAIN-SUFFIX,prompthero.com,📥 下载手动",
-  // 恢复已实测可直连的精确 Google 国内服务，不搬回整个 GoogleCN 集。
-  "DOMAIN,dl.google.com,DIRECT",
-  "DOMAIN,tools.google.com,DIRECT",
-  "DOMAIN,ocsp.pki.goog,DIRECT",
-  "DOMAIN,crl.pki.goog,DIRECT",
-  // Google Play 仅大陆 CDN 直连；其余服务器仍按后续规则分流，避免整域直连误伤海外下载。
-  // 与 v2fly/google-play 的 @cn 条目一致：北京 2x3、上海 ni5、广州 j5o。
-  "DOMAIN,redirector.c.play.google.com,DIRECT",
-  "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.xn--ngstr-lra8j\\.com$,DIRECT",
-  "DOMAIN-REGEX,^r+[0-9]+(---|\\.)sn-(2x3|ni5|j5o)\\w{5}\\.googlevideo\\.com$,DIRECT",
-  // 个人代理例外和Steam下载例外
+  // 个人代理例外和Steam下载例外（原 Google 精确直连已全部撤除，统一由 GOOGLE_RULES 收口至固定新加坡防送中）
   "DOMAIN,apps.cmacked.com,🌎 个人规则",
-  "DOMAIN-SUFFIX,gvt1.com,🇸🇬 谷歌固定",
-  "DOMAIN-SUFFIX,gvt2.com,🇸🇬 谷歌固定",
   "DOMAIN-SUFFIX,xa.steampowered.com,DIRECT",
   "DOMAIN-SUFFIX,steampowered.com,🌎 个人规则",
   "DOMAIN-SUFFIX,steamcommunity.com,🌎 个人规则",
@@ -442,8 +445,7 @@ const MY_CUSTOM_RULES = [
   "DOMAIN-SUFFIX,hanime1.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hanimeone.me,🇭🇰 香港固定",
   "DOMAIN-SUFFIX,hembed.com,🇭🇰 香港固定",
-  // Google AI/账号与普通谷歌服务分别分组，精确 AI 规则先于宽泛域名。
-  // 上面的 dl.google.com、Play 大陆 CDN 直连仍在前，优先于这里。
+  // Google AI/账号与全量谷歌服务分别分组，精确 AI 规则先于宽泛域名与规则集。
   ...GOOGLE_RULES,
   // Telegram 下载与大文件 CDN，走便宜低倍率节点；精确规则先于后续宽泛个人规则
   "DOMAIN-SUFFIX,telegram-cdn.org,📥 下载手动",
@@ -611,21 +613,24 @@ const UPDATE_DIRECT_RULES = [
   "DOMAIN-SUFFIX,gitee.com,DIRECT",
   "DOMAIN-SUFFIX,giteeusercontent.com,DIRECT"
 ];
-// 安卓FCM推送独立保留（域名和IP两部分），不被google.com通用规则抢先接走。
+// 安卓FCM推送独立保留（域名和IP两部分），禁 UDP 防止漏第一跳香港，且默认走固定新加坡不再直连。
 const PUSH_RULES = [
+  "AND,((NETWORK,UDP),(RULE-SET,GoogleFCMDomain)),REJECT",
   "RULE-SET,GoogleFCMDomain,📢 谷歌FCM",
   "RULE-SET,GoogleFCMIP,📢 谷歌FCM,no-resolve"
 ];
 const BASE_RULES = [
   "RULE-SET,PrivateDomain,DIRECT",
   "RULE-SET,PrivateIP,DIRECT,no-resolve",
+  // 纯 IP 访问 Google 时兜底收口固定新加坡（与 ChinaIP 实测 0 交集），避免漏进默认代理（香港）。
+  "RULE-SET,GoogleIP,🇸🇬 谷歌固定,no-resolve",
   "RULE-SET,ChinaDomain,DIRECT",
   // 未列入国内域名集的 CDN 也解析实际 IP 后判断归属，不能用 no-resolve 跳过国内兜底。
   "RULE-SET,ChinaIP,DIRECT",
   "MATCH,🌐 默认代理"
 ];
 
-// 五、外部规则仅保留国内/内网和FCM；需要更新时走普通代理，不绑AI或固定香港组。
+// 五、外部规则保留国内/内网、FCM 及同源 MetaCubeX 全量 Google 规则集；更新时走普通代理，不绑AI或固定香港组。
 const RULE_PROVIDERS = {
   "PrivateDomain": {
     "type": "http",
@@ -660,6 +665,42 @@ const RULE_PROVIDERS = {
     "format": "mrs",
     "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs",
     "path": "./ruleset/basic-rule-v2/ChinaIP.mrs",
+    "interval": 86400,
+    "proxy": "🌐 默认代理"
+  },
+  "GoogleGemini": {
+    "type": "http",
+    "behavior": "domain",
+    "format": "mrs",
+    "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-gemini.mrs",
+    "path": "./ruleset/basic-rule-v2/GoogleGemini.mrs",
+    "interval": 86400,
+    "proxy": "🌐 默认代理"
+  },
+  "GoogleDomain": {
+    "type": "http",
+    "behavior": "domain",
+    "format": "mrs",
+    "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs",
+    "path": "./ruleset/basic-rule-v2/GoogleDomain.mrs",
+    "interval": 86400,
+    "proxy": "🌐 默认代理"
+  },
+  "GoogleCN": {
+    "type": "http",
+    "behavior": "domain",
+    "format": "mrs",
+    "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-cn.mrs",
+    "path": "./ruleset/basic-rule-v2/GoogleCN.mrs",
+    "interval": 86400,
+    "proxy": "🌐 默认代理"
+  },
+  "GoogleIP": {
+    "type": "http",
+    "behavior": "ipcidr",
+    "format": "mrs",
+    "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs",
+    "path": "./ruleset/basic-rule-v2/GoogleIP.mrs",
     "interval": 86400,
     "proxy": "🌐 默认代理"
   },
@@ -740,12 +781,32 @@ const DNS_SETTINGS = {
     ],
     "domain": [
       "+.google.com",
+      "+.google.cn",
+      "+.googleapis.com",
+      "+.googleapis.cn",
+      "+.gstatic.com",
+      "+.gstatic.cn",
+      "+.googleusercontent.com",
+      "+.google",
+      "+.google.dev",
+      "+.gvt1.com",
+      "+.gvt2.com",
+      "+.pki.goog",
+      "+.withgoogle.com",
+      "+.android.com",
+      "+.chrome.com",
+      "+.crashlytics.com",
+      "+.doubleclick.net",
+      "+.google-analytics.com",
+      "+.googletagmanager.com",
+      "+.googlesyndication.com",
+      "+.recaptcha.net",
       "+.facebook.com",
       "+.youtube.com"
     ]
   },
   "nameserver-policy": {
-    // 明确覆盖 geosite:cn 的国内解析，避免 .cn 代理例外仍拿到异常 DNS 答案。
+    // 明确覆盖国内解析，避免 .cn 代理例外仍拿到异常 DNS 答案。
     "+.iproyal.cn": [
       "https://1.1.1.1/dns-query#🌎 个人规则",
       "https://dns.google/dns-query#🌎 个人规则"
@@ -756,16 +817,25 @@ const DNS_SETTINGS = {
       "https://1.1.1.1/dns-query#🐳 DeepSeek",
       "https://dns.google/dns-query#🐳 DeepSeek"
     ],
+    // 所有 .cn 结尾或与 ChinaDomain 重叠的 Google 域用精确域名键显式覆盖 rule-set:ChinaDomain 的 +.cn，
+    // 防止同级 rule-set 竞争时被国内 DNS 抢先解析成 180.163.x.x 大陆 IP。
+    "+.google.cn,+.googleapis.cn,+.gstatic.cn,+.g.cn,+.ggpht.cn,+.doubleclick.cn,+.googleadsserving.cn,+.googlecnapps.cn,+.gstaticcnapps.cn,+.gkecnapps.cn,+.265.com,+.gvt2-cn.com": [
+      "https://1.1.1.1/dns-query#🇸🇬 谷歌固定",
+      "https://8.8.8.8/dns-query#🇸🇬 谷歌固定"
+    ],
+    // 全量 Google / Gemini / Google-CN / FCM 强制经固定新加坡出口走纯 IP DoH 解析，
+    // 彻底避免在亚瑟 redir-host 下拿到 180.163.x.x 大陆 IP 绕过代理；用纯 IP DoH 杜绝 dns.google 自递归。
+    "rule-set:GoogleGemini,GoogleDomain,GoogleCN,GoogleFCMDomain": [
+      "https://1.1.1.1/dns-query#🇸🇬 谷歌固定",
+      "https://8.8.8.8/dns-query#🇸🇬 谷歌固定"
+    ],
     "+.anhuitelecom.com": [
       "https://dns.alidns.com/dns-query",
       "223.5.5.5"
     ],
-    // 与上面的精确直连例外配套，避免被 google.com 的海外 fallback 解析接走。
-    "dl.google.com,tools.google.com,ocsp.pki.goog,crl.pki.goog,redirector.c.play.google.com": [
-      "https://dns.alidns.com/dns-query",
-      "223.5.5.5"
-    ],
-    "geosite:cn,private": [
+    // 改用与 rules 同源的 MetaCubeX ChinaDomain/PrivateDomain 规则集，摆脱客户端自带
+    // Loyalsoldier/geosite.dat 将 google-cn 混入 geosite:cn 导致的送中污染。
+    "rule-set:ChinaDomain,PrivateDomain": [
       "https://doh.pub/dns-query",
       "223.5.5.5"
     ],
@@ -951,7 +1021,8 @@ function main(config) {
     selected("📥 下载手动",["📥 下载自动","🚀 手动切换","🌎 个人规则",...downloadOrderedNodes]),
     downloadAutoGroup,
     selected("☁️ 云盘服务",["DIRECT","♻️ 自动选择","🚀 手动切换","🌐 默认代理",...names]),
-    selected("📢 谷歌FCM",["DIRECT","🌐 默认代理","🚀 手动切换",...us]),
+    // FCM 默认跟随固定新加坡出口，移除 DIRECT 防止已缓存选择的客户端继续从大陆直连 Google。
+    selected("📢 谷歌FCM",[GOOGLE_SG_GROUP,"REJECT","🚀 手动切换"]),
     selected("🛰️ Tailnet",[TS_PROXY_NAME,"DIRECT"]),
     selected("🪙 交易所",exchange)
   ];
